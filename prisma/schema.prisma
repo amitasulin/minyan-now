@@ -1,0 +1,182 @@
+// Minyan Now - Database Schema
+// A platform for finding active minyanim and nearby synagogues
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and community features
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  phone         String?
+  image         String?
+  trustScore    Int       @default(100) // Community trust rating
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  minyanReports MinyanReport[]
+  reviews       Review[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+// Session model for NextAuth
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Synagogue model - core entity for locations
+model Synagogue {
+  id              String   @id @default(cuid())
+  name            String
+  address         String
+  city            String
+  state           String?
+  country         String
+  postalCode      String?
+  latitude        Float
+  longitude       Float
+  nusach          Nusach   @default(ASHKENAZ)
+  rabbi           String?
+  phone           String?
+  email           String?
+  website         String?
+  description     String?
+  
+  // Accessibility features
+  wheelchairAccess Boolean @default(false)
+  parking          Boolean @default(false)
+  airConditioning  Boolean @default(false)
+  womensSection    Boolean @default(false)
+  mikveh           Boolean @default(false)
+  
+  // Ratings and verification
+  averageRating    Float   @default(0)
+  totalReviews    Int     @default(0)
+  isVerified      Boolean @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  prayerSchedule  PrayerSchedule[]
+  minyanReports   MinyanReport[]
+  reviews         Review[]
+  photos          SynagoguePhoto[]
+
+  @@map("synagogues")
+}
+
+// Prayer schedule for each synagogue
+model PrayerSchedule {
+  id           String   @id @default(cuid())
+  synagogueId  String
+  dayOfWeek    Int      // 0 = Sunday, 1 = Monday, etc.
+  prayerType   PrayerType
+  time         String   // Format: "HH:MM"
+  isActive     Boolean  @default(true)
+  notes        String?
+  
+  synagogue    Synagogue @relation(fields: [synagogueId], references: [id], onDelete: Cascade)
+
+  @@unique([synagogueId, dayOfWeek, prayerType])
+  @@map("prayer_schedules")
+}
+
+// Live minyan reports from community
+model MinyanReport {
+  id           String      @id @default(cuid())
+  synagogueId  String
+  userId       String
+  prayerType   PrayerType
+  status       MinyanStatus
+  reportTime   DateTime    @default(now())
+  latitude     Float?      // GPS verification
+  longitude    Float?      // GPS verification
+  notes        String?
+  minyanCount  Int?        // Number of people present
+  needsMore    Int?        // How many more needed for minyan
+  
+  // Verification
+  isVerified   Boolean     @default(false)
+  verifiedBy   String[]    // Array of user IDs who verified
+  
+  synagogue    Synagogue   @relation(fields: [synagogueId], references: [id], onDelete: Cascade)
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("minyan_reports")
+}
+
+// User reviews for synagogues
+model Review {
+  id          String   @id @default(cuid())
+  synagogueId String
+  userId      String
+  rating      Int      // 1-5 stars
+  comment     String?
+  createdAt   DateTime @default(now())
+  
+  synagogue   Synagogue @relation(fields: [synagogueId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([synagogueId, userId])
+  @@map("reviews")
+}
+
+// Photo gallery for synagogues
+model SynagoguePhoto {
+  id          String   @id @default(cuid())
+  synagogueId String
+  url         String
+  caption     String?
+  uploadedBy  String?  // User ID who uploaded
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  synagogue   Synagogue @relation(fields: [synagogueId], references: [id], onDelete: Cascade)
+
+  @@map("synagogue_photos")
+}
+
+// Enums
+enum Nusach {
+  ASHKENAZ
+  SEPHARD
+  EDOT_MIZRACH
+  YEMENITE
+  CHABAD
+  OTHER
+}
+
+enum PrayerType {
+  SHACHARIT
+  MINCHA
+  MAARIV
+  MUSAF
+  NEILAH
+}
+
+enum MinyanStatus {
+  ACTIVE_NOW
+  STARTING_SOON
+  NEEDS_MORE
+  FINISHED
+  NO_MINYAN
+  CANCELLED
+}
