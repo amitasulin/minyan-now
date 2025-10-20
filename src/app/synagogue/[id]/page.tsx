@@ -55,10 +55,11 @@ interface SynagogueDetails {
 }
 
 interface SynagoguePageProps {
-  synagogueId: string;
+  params: Promise<{ id: string }>;
 }
 
-export default function SynagoguePage({ synagogueId }: SynagoguePageProps) {
+export default async function SynagoguePage({ params }: SynagoguePageProps) {
+  const { id: synagogueId } = await params;
   const [synagogue, setSynagogue] = useState<SynagogueDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [showReportForm, setShowReportForm] = useState(false);

@@ -4,10 +4,10 @@ import { prisma } from "@/lib/prisma";
 // GET /api/synagogues/[id] - Get synagogue details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const synagogueId = params.id;
+    const { id: synagogueId } = await params;
 
     const synagogue = await prisma.synagogue.findUnique({
       where: { id: synagogueId },
@@ -60,10 +60,10 @@ export async function GET(
 // PUT /api/synagogues/[id] - Update synagogue
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const synagogueId = params.id;
+    const { id: synagogueId } = await params;
     const body = await request.json();
 
     const synagogue = await prisma.synagogue.update({
@@ -84,10 +84,10 @@ export async function PUT(
 // DELETE /api/synagogues/[id] - Delete synagogue
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const synagogueId = params.id;
+    const { id: synagogueId } = await params;
 
     await prisma.synagogue.delete({
       where: { id: synagogueId },
