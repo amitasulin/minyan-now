@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   MapPin,
   Clock,
@@ -11,6 +11,7 @@ import {
   Globe,
   ChevronLeft,
 } from "lucide-react";
+import Link from "next/link";
 import Map from "@/components/Map";
 import MinyanReportForm from "@/components/MinyanReportForm";
 
@@ -58,19 +59,18 @@ interface SynagoguePageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function SynagoguePage({ params }: SynagoguePageProps) {
-  const { id: synagogueId } = await params;
+export default function SynagoguePage({ params }: SynagoguePageProps) {
+  const [synagogueId, setSynagogueId] = useState<string>("");
   const [synagogue, setSynagogue] = useState<SynagogueDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [showReportForm, setShowReportForm] = useState(false);
-  const [prayerTimes, setPrayerTimes] = useState<any>(null);
+  const [prayerTimes, setPrayerTimes] = useState<{
+    shacharit: string;
+    mincha: string;
+    maariv: string;
+  } | null>(null);
 
-  useEffect(() => {
-    fetchSynagogueDetails();
-    fetchPrayerTimes();
-  }, [synagogueId]);
-
-  const fetchSynagogueDetails = async () => {
+  const fetchSynagogueDetails = useCallback(async () => {
     try {
       const response = await fetch(`/api/synagogues/${synagogueId}`);
       if (response.ok) {
@@ -82,9 +82,9 @@ export default async function SynagoguePage({ params }: SynagoguePageProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [synagogueId]);
 
-  const fetchPrayerTimes = async () => {
+  const fetchPrayerTimes = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/prayer-times?lat=40.6782&lng=-73.9442`
@@ -96,7 +96,22 @@ export default async function SynagoguePage({ params }: SynagoguePageProps) {
     } catch (error) {
       console.error("Error fetching prayer times:", error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const getParams = async () => {
+      const resolvedParams = await params;
+      setSynagogueId(resolvedParams.id);
+    };
+    getParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (synagogueId) {
+      fetchSynagogueDetails();
+      fetchPrayerTimes();
+    }
+  }, [synagogueId, fetchSynagogueDetails, fetchPrayerTimes]);
 
   const getDayName = (dayOfWeek: number) => {
     const days = [
@@ -150,11 +165,11 @@ export default async function SynagoguePage({ params }: SynagoguePageProps) {
             Synagogue Not Found
           </h1>
           <p className="text-gray-600 mb-4">
-            The synagogue you're looking for doesn't exist.
+            The synagogue you&apos;re looking for doesn&apos;t exist.
           </p>
-          <a href="/" className="text-blue-600 hover:text-blue-800">
+          <Link href="/" className="text-blue-600 hover:text-blue-800">
             ← Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -166,13 +181,13 @@ export default async function SynagoguePage({ params }: SynagoguePageProps) {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center py-4">
-            <a
+            <Link
               href="/"
               className="flex items-center text-gray-600 hover:text-gray-900 mr-6"
             >
               <ChevronLeft className="w-5 h-5 mr-1" />
               Back
-            </a>
+            </Link>
             <div className="flex items-center space-x-3">
               <div className="text-2xl">🕍</div>
               <h1 className="text-2xl font-bold text-gray-900">Minyan Now</h1>
@@ -291,7 +306,7 @@ export default async function SynagoguePage({ params }: SynagoguePageProps) {
                 )}
                 {synagogue.womensSection && (
                   <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded">
-                    👩 Women's Section
+                    👩 Women&apos;s Section
                   </span>
                 )}
                 {synagogue.mikveh && (
@@ -325,7 +340,7 @@ export default async function SynagoguePage({ params }: SynagoguePageProps) {
               {prayerTimes && (
                 <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                   <h4 className="font-medium text-blue-900 mb-2">
-                    Today's Prayer Times
+                    Today&apos;s Prayer Times
                   </h4>
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
