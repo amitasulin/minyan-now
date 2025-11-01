@@ -4,7 +4,17 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useReducer, useEffect, Reducer } from "react";
-import { MapPin, Clock, Users, Star, Filter, Search } from "lucide-react";
+import {
+  MapPin,
+  Clock,
+  Users,
+  Star,
+  Filter,
+  Search,
+  TrendingUp,
+  Navigation,
+  Sparkles,
+} from "lucide-react";
 
 const Map = dynamic(() => import("@/components/Map"), {
   loading: () => (
@@ -255,34 +265,48 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white/95 backdrop-blur-sm shadow-md border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="text-2xl">🕍</div>
-              <h1 className="text-2xl font-bold text-gray-900">מניין עכשיו</h1>
+              <div className="text-3xl transform hover:scale-110 transition-transform">
+                🕍
+              </div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                מניין עכשיו
+              </h1>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group"
+              >
                 מצא מניין
+                <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </Link>
               <Link
                 href="/synagogues"
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group"
               >
                 בתי כנסת
+                <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </Link>
               <Link
                 href="/report"
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group"
               >
                 דווח
+                <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/about"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors relative group"
+              >
                 אודות
+                <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </Link>
             </nav>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 font-semibold">
               התחבר
             </button>
           </div>
@@ -290,44 +314,95 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            מצא מניין פעיל בקרבתך
-          </h2>
-          <p className="text-xl md:text-2xl mb-8 text-blue-100">בפחות מדקה</p>
-          <div className="max-w-2xl mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  placeholder="חפש לפי מיקום או שם בית כנסת..."
-                  value={searchQuery}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_SEARCH_QUERY",
-                      payload: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                />
+      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white py-20 overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center mb-4">
+              <Sparkles className="w-8 h-8 text-yellow-300 animate-pulse me-2" />
+              <span className="text-blue-200 font-semibold">פלטפורמה קהילתית</span>
+            </div>
+            <h2 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight animate-fade-in">
+              מצא מניין פעיל
+              <br />
+              <span className="bg-gradient-to-r from-yellow-300 to-yellow-100 bg-clip-text text-transparent">
+                בקרבתך
+              </span>
+            </h2>
+            <p className="text-2xl md:text-3xl mb-4 text-blue-100 font-light">
+              בפחות מדקה
+            </p>
+            <p className="text-lg text-blue-200 max-w-2xl mx-auto">
+              יותר מ-{synagogues.length} בתי כנסת ברחבי ישראל זמינים עכשיו
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="חפש לפי מיקום או שם בית כנסת..."
+                    value={searchQuery}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_SEARCH_QUERY",
+                        payload: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-4 pr-12 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg transition-all"
+                  />
+                </div>
+                <button className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 px-8 py-4 rounded-xl font-bold hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center sm:w-auto w-full">
+                  <Search className="w-5 h-5 ms-2" />
+                  חיפוש
+                </button>
               </div>
-              <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 flex items-center justify-center sm:w-auto w-full">
-                <Search className="w-5 h-5 ms-2" />
-                חיפוש
-              </button>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-4xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 text-center border border-white/20">
+              <div className="text-3xl font-bold text-yellow-300 mb-1">
+                {synagogues.length}
+              </div>
+              <div className="text-sm text-blue-200">בתי כנסת</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 text-center border border-white/20">
+              <div className="text-3xl font-bold text-yellow-300 mb-1">
+                <TrendingUp className="w-8 h-8 mx-auto" />
+              </div>
+              <div className="text-sm text-blue-200">דיווחים חיים</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 text-center border border-white/20">
+              <div className="text-3xl font-bold text-yellow-300 mb-1">
+                <Navigation className="w-8 h-8 mx-auto" />
+              </div>
+              <div className="text-sm text-blue-200">ניווט מדויק</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 text-center border border-white/20">
+              <div className="text-3xl font-bold text-yellow-300 mb-1">24/7</div>
+              <div className="text-sm text-blue-200">זמינות</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="bg-white py-6 border-b">
+      <section className="bg-gradient-to-r from-gray-50 to-white py-6 border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex items-center">
-              <Filter className="w-5 h-5 text-gray-500 ms-2" />
-              <span className="text-sm font-medium text-gray-700">סינון:</span>
+            <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm">
+              <Filter className="w-5 h-5 text-blue-600 ms-2" />
+              <span className="text-sm font-semibold text-gray-800">סינון:</span>
             </div>
             <select
               value={selectedNusach}
@@ -338,7 +413,7 @@ export default function Home() {
                 })
               }
               aria-label="Filter by Nusach"
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm hover:border-blue-300 transition-colors font-medium"
             >
               <option value="">כל הנוסחים</option>
               <option value="ASHKENAZ">אשכנז</option>
@@ -356,7 +431,7 @@ export default function Home() {
                 })
               }
               aria-label="Filter by Prayer"
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm hover:border-blue-300 transition-colors font-medium"
             >
               <option value="">כל התפילות</option>
               <option value="SHACHARIT">שחרית</option>
@@ -372,10 +447,15 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Map */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center text-gray-800">
-                <MapPin className="w-5 h-5 ms-2 text-blue-600" />
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 hover:shadow-2xl transition-shadow">
+              <h3 className="text-xl font-bold mb-4 flex items-center text-gray-900">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2 rounded-lg me-3 shadow-md">
+                  <MapPin className="w-5 h-5 text-white" />
+                </div>
                 בתי כנסת בקרבת מקום
+                <span className="ms-2 text-sm font-normal text-gray-500">
+                  ({filteredSynagogues.length} תוצאות)
+                </span>
               </h3>
               {loading ? (
                 <div className="h-96 flex items-center justify-center">
@@ -408,54 +488,76 @@ export default function Home() {
 
           {/* Synagogue List */}
           <div className="space-y-4">
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center text-gray-800">
-                <Users className="w-5 h-5 ms-2 text-blue-600" />
-                בתי כנסת ({filteredSynagogues.length})
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+              <h3 className="text-xl font-bold mb-5 flex items-center text-gray-900">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2 rounded-lg me-3 shadow-md">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                בתי כנסת
+                <span className="ms-2 text-sm font-normal text-gray-500">
+                  ({filteredSynagogues.length})
+                </span>
               </h3>
-              <div className="space-y-3">
-                {filteredSynagogues.map((synagogue) => (
+              <div className="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
+                {filteredSynagogues.map((synagogue, index) => (
                   <div
                     key={synagogue.id}
-                    className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 cursor-pointer transition-colors"
+                    className="group p-4 border-2 border-gray-100 rounded-xl hover:border-blue-300 hover:shadow-lg cursor-pointer transition-all transform hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50"
                     onClick={() => handleSynagogueClick(synagogue.id)}
+                    style={{
+                      animationDelay: `${index * 50}ms`,
+                    }}
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold text-gray-900">
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="font-bold text-gray-900 text-base group-hover:text-blue-600 transition-colors line-clamp-2">
                         {synagogue.name}
                       </h4>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <Star className="w-4 h-4 text-yellow-400 me-1" />
-                        {synagogue.averageRating.toLocaleString("he-IL", {
-                          minimumFractionDigits: 1,
-                          maximumFractionDigits: 1,
-                        })}
-                        <span className="ml-1">({synagogue.totalReviews})</span>
+                      <div className="flex items-center text-sm bg-yellow-50 px-2 py-1 rounded-lg ms-3 border border-yellow-200">
+                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 me-1" />
+                        <span className="font-bold text-yellow-700">
+                          {synagogue.averageRating.toLocaleString("he-IL", {
+                            minimumFractionDigits: 1,
+                            maximumFractionDigits: 1,
+                          })}
+                        </span>
+                        <span className="ms-1 text-xs text-gray-500">
+                          ({synagogue.totalReviews})
+                        </span>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {synagogue.address}
-                    </p>
-                    <p className="text-sm text-gray-500 mb-3">
+                    <div className="flex items-center text-sm text-gray-600 mb-2">
+                      <MapPin className="w-4 h-4 me-2 text-gray-400" />
+                      <span className="line-clamp-1">{synagogue.address}</span>
+                    </div>
+                    <p className="text-sm text-gray-500 mb-3 font-medium">
                       {synagogue.city}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                      <span className="text-xs font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-lg shadow-sm">
                         {synagogue.nusach}
                       </span>
-                      <div className="flex space-x-2 text-xs text-gray-500">
+                      <div className="flex gap-2">
                         {synagogue.wheelchairAccess && (
-                          <span role="img" aria-label="Wheelchair accessible">
+                          <span
+                            className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium"
+                            title="נגיש לכסא גלגלים"
+                          >
                             ♿
                           </span>
                         )}
                         {synagogue.parking && (
-                          <span role="img" aria-label="Parking available">
+                          <span
+                            className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium"
+                            title="חניה"
+                          >
                             🅿️
                           </span>
                         )}
                         {synagogue.airConditioning && (
-                          <span role="img" aria-label="Air conditioning">
+                          <span
+                            className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-medium"
+                            title="מיזוג אוויר"
+                          >
                             ❄️
                           </span>
                         )}
@@ -467,17 +569,18 @@ export default function Home() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-xl border border-blue-100 p-6">
+              <h3 className="text-xl font-bold mb-5 text-gray-900 flex items-center">
+                <Sparkles className="w-5 h-5 me-2 text-blue-600" />
                 פעולות מהירות
               </h3>
               <div className="space-y-3">
-                <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 flex items-center justify-center">
-                  <Users className="w-4 h-4 ms-2" />
+                <button className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl hover:from-green-600 hover:to-green-700 flex items-center justify-center font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                  <Users className="w-5 h-5 ms-2" />
                   דווח על מניין פעיל
                 </button>
-                <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 flex items-center justify-center">
-                  <Clock className="w-4 h-4 ms-2" />
+                <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                  <Clock className="w-5 h-5 ms-2" />
                   צפה בזמני תפילה
                 </button>
               </div>
@@ -487,51 +590,99 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 mt-16">
+      <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="text-2xl ms-2">🕍</div>
-                <h3 className="text-xl font-bold">מניין עכשיו</h3>
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="text-3xl ms-2 transform hover:scale-110 transition-transform">
+                  🕍
+                </div>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">
+                  מניין עכשיו
+                </h3>
               </div>
-              <p className="text-gray-400">
-                מצא מניינים פעילים ובתי כנסת בקרבתך בזמן אמת.
+              <p className="text-gray-400 leading-relaxed">
+                מצא מניינים פעילים ובתי כנסת בקרבתך בזמן אמת. פלטפורמה קהילתית
+                לחיבור יהודי ברחבי ישראל.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">תכונות</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>מצא מניין</li>
-                <li>חיפוש בתי כנסת</li>
-                <li>זמני תפילה</li>
-                <li>דיווחים מהקהילה</li>
+              <h4 className="font-bold mb-5 text-lg text-blue-300">תכונות</h4>
+              <ul className="space-y-3 text-gray-400">
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  מצא מניין
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  חיפוש בתי כנסת
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  זמני תפילה
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  דיווחים מהקהילה
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">תמיכה</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>מרכז עזרה</li>
-                <li>צור קשר</li>
-                <li>דווח על תקלה</li>
-                <li>שאלות נפוצות</li>
+              <h4 className="font-bold mb-5 text-lg text-blue-300">תמיכה</h4>
+              <ul className="space-y-3 text-gray-400">
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  מרכז עזרה
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  צור קשר
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  דווח על תקלה
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  שאלות נפוצות
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">קהילה</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>אודותינו</li>
-                <li>מדיניות פרטיות</li>
-                <li>תנאי שימוש</li>
-                <li>גישת API</li>
+              <h4 className="font-bold mb-5 text-lg text-blue-300">קהילה</h4>
+              <ul className="space-y-3 text-gray-400">
+                <Link
+                  href="/about"
+                  className="block hover:text-white transition-colors"
+                >
+                  אודותינו
+                </Link>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  מדיניות פרטיות
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  תנאי שימוש
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  גישת API
+                </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 מניין עכשיו. כל הזכויות שמורות.</p>
+          <div className="border-t border-gray-700 mt-12 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-gray-400 text-center md:text-right">
+                &copy; 2024 מניין עכשיו. כל הזכויות שמורות.
+              </p>
+              <div className="flex gap-4 mt-4 md:mt-0">
+                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer">
+                  📱
+                </div>
+                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer">
+                  ✉️
+                </div>
+                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer">
+                  🌐
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
