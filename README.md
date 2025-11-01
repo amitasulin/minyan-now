@@ -47,27 +47,34 @@ A web platform for finding active minyanim and nearby synagogues in real-time. B
    ```
 
 3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
-
-   ```env
-   # Database
-   DATABASE_URL="postgresql://username:password@localhost:5432/minyan_now?schema=public"
-
-   # NextAuth
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-secret-key-here"
-
-   # Google OAuth (for authentication)
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
-
-   # Google Maps API
-   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="NEXT_PUBLIC_GOOGLE_MAPS_API_KEY"
-
-   # Prayer Times APIs
-   MYZMANIM_API_KEY="your-myzmanim-api-key"
-   HEBCAL_API_KEY="your-hebcal-api-key"
+   
+   Create a `.env.local` file in the root directory (you can copy from `.env.local.example`):
+   
+   ```bash
+   cp .env.local.example .env.local
    ```
+   
+   Then edit `.env.local` and add your API keys:
+   
+   ```env
+   # Google Maps API - REQUIRED
+   # Get your API key: https://console.cloud.google.com/google/maps-apis
+   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="your-actual-api-key-here"
+   
+   # Database (optional for basic usage)
+   DATABASE_URL="file:./dev.db"
+   
+   # Other optional variables...
+   ```
+   
+   **How to get Google Maps API Key:**
+   
+   1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+   2. Create a new project or select an existing one
+   3. Enable **Maps JavaScript API** and **Places API**
+   4. Go to "Credentials" → "Create Credentials" → "API Key"
+   5. Copy the API key to your `.env.local` file
+   6. (Recommended) Restrict the API key to only your domains for security
 
 4. **Set up the database**
 
