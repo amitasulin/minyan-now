@@ -1,142 +1,149 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useCallback } from "react";
+import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
 
 interface MapProps {
   center: { lat: number; lng: number };
   zoom?: number;
-  synagogues?: Array<{
+  synagogues: Array<{
     id: string;
     name: string;
     latitude: number;
     longitude: number;
-    nusach: string;
-    averageRating: number;
+    address?: string;
+    city?: string;
+    averageRating?: number;
   }>;
-  onSynagogueClick?: (synagogueId: string) => void;
+  onSynagogueClick: (synagogueId: string) => void;
   className?: string;
 }
 
-export default function Map({
+const MapComponent = ({
   center,
   zoom = 13,
   synagogues = [],
   onSynagogueClick,
   className = "w-full h-96",
-}: MapProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
+}: MapProps) => {
+  const [selectedSynagogue, setSelectedSynagogue] = useState<string | null>(
+    null
+  );
 
-  useEffect(() => {
-    const initMap = async () => {
-      // Wait for Google Maps to be loaded
-      if (typeof window === "undefined" || !window.google) {
-        console.error("Google Maps not loaded");
-        return;
-      }
+  const mapContainerStyle = {
+    width: "100%",
+    height: className.includes("h-") ? "100%" : "384px",
+  };
 
-      try {
-        // Import the Maps library
-        const { Map } = (await google.maps.importLibrary(
-          "maps"
-        )) as google.maps.MapsLibrary;
+  const mapOptions = {
+    disableDefaultUI: false,
+    zoomControl: true,
+    streetViewControl: false,
+    mapTypeControl: false,
+    fullscreenControl: true,
+    styles: [
+      {
+        featureType: "poi",
+        elementType: "labels",
+        stylers: [{ visibility: "off" }],
+      },
+    ],
+  };
 
-        if (mapRef.current) {
-          const mapInstance = new Map(mapRef.current, {
-            center,
-            zoom,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: false,
-            styles: [
-              {
-                featureType: "poi",
-                elementType: "labels",
-                stylers: [{ visibility: "off" }],
-              },
-            ],
-          });
+  // Custom synagogue icon
+  const synagogueIcon = {
+    url: "data:image/svg+xml;base64," + btoa(`
+      <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#1e40af" d="M16 2L2 10v4h2v10c0 2.2 1.8 4 4 4h6v6h8v-6h6c2.2 0 4-1.8 4-4V14h2v-4L16 2z"/>
+        <circle cx="16" cy="18" r="3" fill="#fbbf24"/>
+      </svg>
+    `),
+    scaledSize: { width: 32, height: 32 } as google.maps.Size,
+    anchor: { x: 16, y: 32 } as google.maps.Point,
+  };
 
-          setMap(mapInstance);
-        }
-      } catch (error) {
-        console.error("Error loading Google Maps:", error);
-      }
-    };
+  const handleMarkerClick = useCallback(
+    (synagogueId: string) => {
+      setSelectedSynagogue(synagogueId);
+    },
+    []
+  );
 
-    // Wait for Google Maps to be available
-    const checkGoogleMaps = () => {
-      if (
-        typeof window !== "undefined" &&
-        window.google &&
-        window.google.maps
-      ) {
-        initMap();
-      } else {
-        // Retry after a short delay
-        setTimeout(checkGoogleMaps, 100);
-      }
-    };
-
-    checkGoogleMaps();
+  const handleInfoWindowClose = useCallback(() => {
+    setSelectedSynagogue(null);
   }, []);
 
-  useEffect(() => {
-    if (!map || !synagogues.length) return;
-
-    // Clear existing markers
-    markers.forEach((marker) => marker.setMap(null));
-
-    const newMarkers = synagogues.map((synagogue) => {
-      const marker = new google.maps.Marker({
-        position: { lat: synagogue.latitude, lng: synagogue.longitude },
-        map,
-        title: synagogue.name,
-        icon: {
-          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="16" cy="16" r="12" fill="#2563eb" stroke="#ffffff" stroke-width="2"/>
-              <text x="16" y="20" text-anchor="middle" fill="white" font-size="12" font-family="Arial">🕍</text>
-            </svg>
-          `)}`,
-          scaledSize: new google.maps.Size(32, 32),
-          anchor: new google.maps.Point(16, 16),
-        },
-      });
-
-      marker.addListener("click", () => {
-        if (onSynagogueClick) {
-          onSynagogueClick(synagogue.id);
-        }
-      });
-
-      return marker;
-    });
-
-    setMarkers(newMarkers);
-
-    // Fit map to show all synagogues
-    if (synagogues.length > 1) {
-      const bounds = new google.maps.LatLngBounds();
-      synagogues.forEach((synagogue) => {
-        bounds.extend({ lat: synagogue.latitude, lng: synagogue.longitude });
-      });
-      map.fitBounds(bounds);
-    }
-  }, [map, synagogues, onSynagogueClick]);
-
   return (
-    <div className={className} style={{ minHeight: "300px" }}>
-      <div ref={mapRef} className="w-full h-full" />
-      {!map && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-            <p className="text-gray-600">Loading map...</p>
-          </div>
+    <GoogleMap
+      mapContainerStyle={mapContainerStyle}
+      center={center}
+      zoom={zoom}
+      options={mapOptions}
+    >
+      {synagogues.map((synagogue) => (
+        <div key={synagogue.id}>
+          <Marker
+            position={{ lat: synagogue.latitude, lng: synagogue.longitude }}
+            icon={synagogueIcon}
+            onClick={() => handleMarkerClick(synagogue.id)}
+            title={synagogue.name}
+          />
+          {selectedSynagogue === synagogue.id && (
+            <InfoWindow
+              position={{ lat: synagogue.latitude, lng: synagogue.longitude }}
+              onCloseClick={handleInfoWindowClose}
+            >
+              <div style={{ direction: "rtl", minWidth: "200px", padding: "8px" }}>
+                <h3 style={{ fontWeight: "600", marginBottom: "4px", fontSize: "14px", color: "#111827" }}>
+                  {synagogue.name}
+                </h3>
+                {synagogue.address && (
+                  <p style={{ fontSize: "12px", color: "#4b5563", marginBottom: "4px" }}>
+                    {synagogue.address}
+                  </p>
+                )}
+                {synagogue.city && (
+                  <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "8px" }}>
+                    {synagogue.city}
+                  </p>
+                )}
+                {synagogue.averageRating && (
+                  <p style={{ fontSize: "12px", color: "#d97706", marginBottom: "8px" }}>
+                    ⭐ {synagogue.averageRating.toFixed(1)}
+                  </p>
+                )}
+                <button
+                  onClick={() => {
+                    onSynagogueClick(synagogue.id);
+                    handleInfoWindowClose();
+                  }}
+                  style={{
+                    width: "100%",
+                    marginTop: "8px",
+                    backgroundColor: "#2563eb",
+                    color: "white",
+                    fontSize: "12px",
+                    padding: "4px 12px",
+                    borderRadius: "6px",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#1d4ed8";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#2563eb";
+                  }}
+                >
+                  פרטים נוספים
+                </button>
+              </div>
+            </InfoWindow>
+          )}
         </div>
-      )}
-    </div>
+      ))}
+    </GoogleMap>
   );
-}
+};
+
+export default MapComponent;

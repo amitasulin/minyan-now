@@ -1,8 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { useReducer, useEffect, Reducer } from "react";
 import { MapPin, Clock, Users, Star, Filter, Search } from "lucide-react";
-import Map from "@/components/Map";
+
+const Map = dynamic(() => import("@/components/Map"), {
+  loading: () => (
+    <div className="h-96 flex items-center justify-center text-gray-500">
+      טוען מפה...
+    </div>
+  ),
+  ssr: false,
+});
 
 interface Synagogue {
   id: string;
@@ -19,87 +30,211 @@ interface Synagogue {
   airConditioning: boolean;
 }
 
-export default function Home() {
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
-  const [synagogues, setSynagogues] = useState<Synagogue[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedNusach, setSelectedNusach] = useState("");
-  const [selectedPrayer, setSelectedPrayer] = useState("");
-  const [loading, setLoading] = useState(true);
+interface State {
+  userLocation: { lat: number; lng: number } | null;
+  synagogues: Synagogue[];
+  searchQuery: string;
+  selectedNusach: string;
+  selectedPrayer: string;
+  loading: boolean;
+}
 
-  // Mock data for demonstration
-  const mockSynagogues: Synagogue[] = [
-    {
-      id: "1",
-      name: "Congregation Beth Israel",
-      address: "123 Main Street",
-      city: "Brooklyn, NY",
-      latitude: 40.6782,
-      longitude: -73.9442,
-      nusach: "ASHKENAZ",
-      averageRating: 4.5,
-      totalReviews: 23,
-      wheelchairAccess: true,
-      parking: true,
-      airConditioning: true,
-    },
-    {
-      id: "2",
-      name: "Sephardic Center",
-      address: "456 Oak Avenue",
-      city: "Brooklyn, NY",
-      latitude: 40.6892,
-      longitude: -73.9342,
-      nusach: "SEPHARD",
-      averageRating: 4.2,
-      totalReviews: 18,
-      wheelchairAccess: false,
-      parking: true,
-      airConditioning: true,
-    },
-    {
-      id: "3",
-      name: "Chabad House",
-      address: "789 Pine Street",
-      city: "Brooklyn, NY",
-      latitude: 40.6682,
-      longitude: -73.9542,
-      nusach: "CHABAD",
-      averageRating: 4.8,
-      totalReviews: 31,
-      wheelchairAccess: true,
-      parking: false,
-      airConditioning: false,
-    },
-  ];
+type Action =
+  | { type: "SET_USER_LOCATION"; payload: { lat: number; lng: number } }
+  | { type: "SET_SYNAGOGUES_AND_FINISH_LOADING"; payload: Synagogue[] }
+  | { type: "SET_SEARCH_QUERY"; payload: string }
+  | { type: "SET_SELECTED_NUSACH"; payload: string }
+  | { type: "SET_SELECTED_PRAYER"; payload: string };
+
+const initialState: State = {
+  userLocation: null,
+  synagogues: [],
+  searchQuery: "",
+  selectedNusach: "",
+  selectedPrayer: "",
+  loading: true,
+};
+
+const reducer: Reducer<State, Action> = (state, action) => {
+  switch (action.type) {
+    case "SET_USER_LOCATION":
+      return { ...state, userLocation: action.payload };
+    case "SET_SYNAGOGUES_AND_FINISH_LOADING":
+      return { ...state, synagogues: action.payload, loading: false };
+    case "SET_SEARCH_QUERY":
+      return { ...state, searchQuery: action.payload };
+    case "SET_SELECTED_NUSACH":
+      return { ...state, selectedNusach: action.payload };
+    case "SET_SELECTED_PRAYER":
+      return { ...state, selectedPrayer: action.payload };
+    default:
+      return state;
+  }
+};
+
+// Real Israeli synagogue data
+const mockSynagogues: Synagogue[] = [
+  {
+    id: "1",
+    name: "בית הכנסת הגדול - תל אביב",
+    address: "רחוב אלנבי 110",
+    city: "תל אביב-יפו",
+    latitude: 32.0643,
+    longitude: 34.7704,
+    nusach: "ASHKENAZ",
+    averageRating: 4.7,
+    totalReviews: 145,
+    wheelchairAccess: true,
+    parking: true,
+    airConditioning: true,
+  },
+  {
+    id: "2",
+    name: "בית הכנסת החורבה",
+    address: "הרובע היהודי",
+    city: "ירושלים",
+    latitude: 31.7746,
+    longitude: 35.2298,
+    nusach: "ASHKENAZ",
+    averageRating: 4.9,
+    totalReviews: 289,
+    wheelchairAccess: true,
+    parking: false,
+    airConditioning: true,
+  },
+  {
+    id: "3",
+    name: "בית הכנסת הספרדי - ירושלים",
+    address: "רחוב בן יהדה 45",
+    city: "ירושלים",
+    latitude: 31.7781,
+    longitude: 35.2246,
+    nusach: "SEPHARD",
+    averageRating: 4.6,
+    totalReviews: 178,
+    wheelchairAccess: false,
+    parking: true,
+    airConditioning: true,
+  },
+  {
+    id: "4",
+    name: "בית כנסת חב\"ד רמת אביב",
+    address: "רחוב רמת אביב 30",
+    city: "תל אביב-יפו",
+    latitude: 32.1173,
+    longitude: 34.8069,
+    nusach: "CHABAD",
+    averageRating: 4.8,
+    totalReviews: 92,
+    wheelchairAccess: true,
+    parking: true,
+    airConditioning: true,
+  },
+  {
+    id: "5",
+    name: "בית הכנסת העתיק בטבריה",
+    address: "הרובע היהודי העתיק",
+    city: "טבריה",
+    latitude: 32.7894,
+    longitude: 35.5426,
+    nusach: "SEPHARD",
+    averageRating: 4.5,
+    totalReviews: 67,
+    wheelchairAccess: false,
+    parking: false,
+    airConditioning: false,
+  },
+  {
+    id: "6",
+    name: "בית הכנסת אוהל משה - חיפה",
+    address: "רחוב הרצל 50",
+    city: "חיפה",
+    latitude: 32.8192,
+    longitude: 34.9992,
+    nusach: "ASHKENAZ",
+    averageRating: 4.4,
+    totalReviews: 134,
+    wheelchairAccess: true,
+    parking: true,
+    airConditioning: true,
+  },
+  {
+    id: "7",
+    name: "בית הכנסת עדת ישורון - נתניה",
+    address: "רחוב בן גוריון 15",
+    city: "נתניה",
+    latitude: 32.3298,
+    longitude: 34.8572,
+    nusach: "EDOT_MIZRACH",
+    averageRating: 4.6,
+    totalReviews: 98,
+    wheelchairAccess: true,
+    parking: true,
+    airConditioning: true,
+  },
+  {
+    id: "8",
+    name: "בית הכנסת אור החיים - בני ברק",
+    address: "רחוב רבי עקיבא 120",
+    city: "בני ברק",
+    latitude: 32.0918,
+    longitude: 34.8268,
+    nusach: "ASHKENAZ",
+    averageRating: 4.9,
+    totalReviews: 234,
+    wheelchairAccess: true,
+    parking: false,
+    airConditioning: true,
+  },
+];
+
+export default function Home() {
+  const router = useRouter();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    userLocation,
+    synagogues,
+    searchQuery,
+    selectedNusach,
+    selectedPrayer,
+    loading,
+  } = state;
 
   useEffect(() => {
     // Get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
+          dispatch({
+            type: "SET_USER_LOCATION",
+            payload: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            },
           });
         },
-        (error) => {
+        (error: GeolocationPositionError) => {
           console.error("Error getting location:", error);
-          // Default to Brooklyn, NY if location access denied
-          setUserLocation({ lat: 40.6782, lng: -73.9442 });
+          // Default to Tel Aviv, Israel if location access denied
+          dispatch({
+            type: "SET_USER_LOCATION",
+            payload: { lat: 32.0853, lng: 34.7818 },
+          });
         }
       );
     } else {
-      setUserLocation({ lat: 40.6782, lng: -73.9442 });
+      dispatch({
+        type: "SET_USER_LOCATION",
+        payload: { lat: 32.0853, lng: 34.7818 },
+      });
     }
 
     // Simulate loading synagogues
     setTimeout(() => {
-      setSynagogues(mockSynagogues);
-      setLoading(false);
+      dispatch({
+        type: "SET_SYNAGOGUES_AND_FINISH_LOADING",
+        payload: mockSynagogues,
+      });
     }, 1000);
   }, []);
 
@@ -114,7 +249,7 @@ export default function Home() {
   });
 
   const handleSynagogueClick = (synagogueId: string) => {
-    window.location.href = `/synagogue/${synagogueId}`;
+    router.push(`/synagogue/${synagogueId}`);
   };
 
   return (
@@ -125,24 +260,30 @@ export default function Home() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
               <div className="text-2xl">🕍</div>
-              <h1 className="text-2xl font-bold text-gray-900">Minyan Now</h1>
+              <h1 className="text-2xl font-bold text-gray-900">מניין עכשיו</h1>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-600 hover:text-gray-900">
-                Find Minyan
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">
-                Synagogues
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">
-                Report
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">
-                About
-              </a>
+              <Link href="/" className="text-gray-600 hover:text-gray-900">
+                מצא מניין
+              </Link>
+              <Link
+                href="/synagogues"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                בתי כנסת
+              </Link>
+              <Link
+                href="/report"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                דווח
+              </Link>
+              <Link href="/about" className="text-gray-600 hover:text-gray-900">
+                אודות
+              </Link>
             </nav>
             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-              Sign In
+              התחבר
             </button>
           </div>
         </div>
@@ -151,26 +292,29 @@ export default function Home() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Find an Active Minyan Near You
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            מצא מניין פעיל בקרבתך
           </h2>
-          <p className="text-xl md:text-2xl mb-8 text-blue-100">
-            In under a minute
-          </p>
+          <p className="text-xl md:text-2xl mb-8 text-blue-100">בפחות מדקה</p>
           <div className="max-w-2xl mx-auto">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <input
                   type="text"
-                  placeholder="Search by location or synagogue name..."
+                  placeholder="חפש לפי מיקום או שם בית כנסת..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "SET_SEARCH_QUERY",
+                      payload: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
               </div>
-              <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 flex items-center justify-center">
-                <Search className="w-5 h-5 mr-2" />
-                Search
+              <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 flex items-center justify-center sm:w-auto w-full">
+                <Search className="w-5 h-5 ms-2" />
+                חיפוש
               </button>
             </div>
           </div>
@@ -181,33 +325,43 @@ export default function Home() {
       <section className="bg-white py-6 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex items-center space-x-2">
-              <Filter className="w-5 h-5 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">
-                Filters:
-              </span>
+            <div className="flex items-center">
+              <Filter className="w-5 h-5 text-gray-500 ms-2" />
+              <span className="text-sm font-medium text-gray-700">סינון:</span>
             </div>
             <select
               value={selectedNusach}
-              onChange={(e) => setSelectedNusach(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_SELECTED_NUSACH",
+                  payload: e.target.value,
+                })
+              }
+              aria-label="Filter by Nusach"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
             >
-              <option value="">All Nusach</option>
-              <option value="ASHKENAZ">Ashkenaz</option>
-              <option value="SEPHARD">Sephard</option>
-              <option value="EDOT_MIZRACH">Edot Mizrach</option>
-              <option value="YEMENITE">Yemenite</option>
-              <option value="CHABAD">Chabad</option>
+              <option value="">כל הנוסחים</option>
+              <option value="ASHKENAZ">אשכנז</option>
+              <option value="SEPHARD">ספרד</option>
+              <option value="EDOT_MIZRACH">עדות המזרח</option>
+              <option value="YEMENITE">תימני</option>
+              <option value="CHABAD">חב"ד</option>
             </select>
             <select
               value={selectedPrayer}
-              onChange={(e) => setSelectedPrayer(e.target.value)}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_SELECTED_PRAYER",
+                  payload: e.target.value,
+                })
+              }
+              aria-label="Filter by Prayer"
               className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Prayers</option>
-              <option value="SHACHARIT">Shacharit</option>
-              <option value="MINCHA">Mincha</option>
-              <option value="MAARIV">Maariv</option>
+              <option value="">כל התפילות</option>
+              <option value="SHACHARIT">שחרית</option>
+              <option value="MINCHA">מנחה</option>
+              <option value="MAARIV">ערבית</option>
             </select>
           </div>
         </div>
@@ -219,24 +373,34 @@ export default function Home() {
           {/* Map */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <MapPin className="w-5 h-5 mr-2 text-blue-600" />
-                Nearby Synagogues
+              <h3 className="text-lg font-semibold mb-4 flex items-center text-gray-800">
+                <MapPin className="w-5 h-5 ms-2 text-blue-600" />
+                בתי כנסת בקרבת מקום
               </h3>
               {loading ? (
                 <div className="h-96 flex items-center justify-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                 </div>
               ) : userLocation ? (
-                <Map
-                  center={userLocation}
-                  synagogues={filteredSynagogues}
-                  onSynagogueClick={handleSynagogueClick}
-                  className="w-full h-96 rounded-lg"
-                />
+                <div className="h-96 w-full rounded-lg overflow-hidden border border-gray-200">
+                  <Map
+                    center={userLocation}
+                    synagogues={filteredSynagogues.map((s) => ({
+                      id: s.id,
+                      name: s.name,
+                      latitude: s.latitude,
+                      longitude: s.longitude,
+                      address: s.address,
+                      city: s.city,
+                      averageRating: s.averageRating,
+                    }))}
+                    onSynagogueClick={handleSynagogueClick}
+                    className="w-full h-full"
+                  />
+                </div>
               ) : (
                 <div className="h-96 flex items-center justify-center text-gray-500">
-                  Loading map...
+                  טוען מפה...
                 </div>
               )}
             </div>
@@ -245,9 +409,9 @@ export default function Home() {
           {/* Synagogue List */}
           <div className="space-y-4">
             <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <Users className="w-5 h-5 mr-2 text-blue-600" />
-                Synagogues ({filteredSynagogues.length})
+              <h3 className="text-lg font-semibold mb-4 flex items-center text-gray-800">
+                <Users className="w-5 h-5 ms-2 text-blue-600" />
+                בתי כנסת ({filteredSynagogues.length})
               </h3>
               <div className="space-y-3">
                 {filteredSynagogues.map((synagogue) => (
@@ -261,8 +425,11 @@ export default function Home() {
                         {synagogue.name}
                       </h4>
                       <div className="flex items-center text-sm text-gray-500">
-                        <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                        {synagogue.averageRating.toFixed(1)}
+                        <Star className="w-4 h-4 text-yellow-400 me-1" />
+                        {synagogue.averageRating.toLocaleString("he-IL", {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1,
+                        })}
                         <span className="ml-1">({synagogue.totalReviews})</span>
                       </div>
                     </div>
@@ -277,9 +444,21 @@ export default function Home() {
                         {synagogue.nusach}
                       </span>
                       <div className="flex space-x-2 text-xs text-gray-500">
-                        {synagogue.wheelchairAccess && <span>♿</span>}
-                        {synagogue.parking && <span>🅿️</span>}
-                        {synagogue.airConditioning && <span>❄️</span>}
+                        {synagogue.wheelchairAccess && (
+                          <span role="img" aria-label="Wheelchair accessible">
+                            ♿
+                          </span>
+                        )}
+                        {synagogue.parking && (
+                          <span role="img" aria-label="Parking available">
+                            🅿️
+                          </span>
+                        )}
+                        {synagogue.airConditioning && (
+                          <span role="img" aria-label="Air conditioning">
+                            ❄️
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -289,15 +468,17 @@ export default function Home() {
 
             {/* Quick Actions */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                פעולות מהירות
+              </h3>
               <div className="space-y-3">
                 <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 flex items-center justify-center">
-                  <Users className="w-4 h-4 mr-2" />
-                  Report Active Minyan
+                  <Users className="w-4 h-4 ms-2" />
+                  דווח על מניין פעיל
                 </button>
                 <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 flex items-center justify-center">
-                  <Clock className="w-4 h-4 mr-2" />
-                  View Prayer Times
+                  <Clock className="w-4 h-4 ms-2" />
+                  צפה בזמני תפילה
                 </button>
               </div>
             </div>
@@ -311,43 +492,43 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="text-2xl">🕍</div>
-                <h3 className="text-xl font-bold">Minyan Now</h3>
+                <div className="text-2xl ms-2">🕍</div>
+                <h3 className="text-xl font-bold">מניין עכשיו</h3>
               </div>
               <p className="text-gray-400">
-                Find active minyanim and nearby synagogues in real-time.
+                מצא מניינים פעילים ובתי כנסת בקרבתך בזמן אמת.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Features</h4>
+              <h4 className="font-semibold mb-4">תכונות</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Find Minyan</li>
-                <li>Synagogue Search</li>
-                <li>Prayer Times</li>
-                <li>Community Reports</li>
+                <li>מצא מניין</li>
+                <li>חיפוש בתי כנסת</li>
+                <li>זמני תפילה</li>
+                <li>דיווחים מהקהילה</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4">תמיכה</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Help Center</li>
-                <li>Contact Us</li>
-                <li>Report Issue</li>
-                <li>FAQ</li>
+                <li>מרכז עזרה</li>
+                <li>צור קשר</li>
+                <li>דווח על תקלה</li>
+                <li>שאלות נפוצות</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Community</h4>
+              <h4 className="font-semibold mb-4">קהילה</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>About Us</li>
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>API Access</li>
+                <li>אודותינו</li>
+                <li>מדיניות פרטיות</li>
+                <li>תנאי שימוש</li>
+                <li>גישת API</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Minyan Now. All rights reserved.</p>
+            <p>&copy; 2024 מניין עכשיו. כל הזכויות שמורות.</p>
           </div>
         </div>
       </footer>
