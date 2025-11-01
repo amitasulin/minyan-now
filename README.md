@@ -62,7 +62,7 @@ A web platform for finding active minyanim and nearby synagogues in real-time. B
    GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
    # Google Maps API
-   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="your-google-maps-api-key"
+   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="AIzaSyACUldXKAdZpbCPLOa3zQOTmRFjOmHFAhE"
 
    # Prayer Times APIs
    MYZMANIM_API_KEY="your-myzmanim-api-key"
