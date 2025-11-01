@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Navigation,
   Sparkles,
+  X,
 } from "lucide-react";
 
 const Map = dynamic(() => import("@/components/Map"), {
@@ -239,24 +240,72 @@ export default function Home() {
       });
     }
 
-    // Simulate loading synagogues
-    setTimeout(() => {
-      dispatch({
-        type: "SET_SYNAGOGUES_AND_FINISH_LOADING",
-        payload: mockSynagogues,
-      });
-    }, 1000);
+    // Fetch synagogues from API
+    const fetchSynagogues = async () => {
+      try {
+        const response = await fetch("/api/synagogues");
+        if (response.ok) {
+          const data = await response.json();
+          dispatch({
+            type: "SET_SYNAGOGUES_AND_FINISH_LOADING",
+            payload: data.synagogues || [],
+          });
+        } else {
+          console.error("Failed to fetch synagogues");
+          // Fallback to empty array on error
+          dispatch({
+            type: "SET_SYNAGOGUES_AND_FINISH_LOADING",
+            payload: [],
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching synagogues:", error);
+        // Fallback to empty array on error
+        dispatch({
+          type: "SET_SYNAGOGUES_AND_FINISH_LOADING",
+          payload: [],
+        });
+      }
+    };
+
+    fetchSynagogues();
   }, []);
 
+  // Helper function to get Hebrew nusach name
+  const getNusachHebrewName = (nusach: string): string => {
+    const nusachMap: { [key: string]: string } = {
+      ASHKENAZ: "אשכנז",
+      SEPHARD: "ספרד",
+      EDOT_MIZRACH: "עדות המזרח",
+      YEMENITE: "תימני",
+      CHABAD: "חב\"ד",
+    };
+    return nusachMap[nusach] || nusach;
+  };
+
   const filteredSynagogues = synagogues.filter((synagogue) => {
+    const query = searchQuery.toLowerCase().trim();
     const matchesSearch =
-      synagogue.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      synagogue.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      synagogue.city.toLowerCase().includes(searchQuery.toLowerCase());
+      !query ||
+      synagogue.name.toLowerCase().includes(query) ||
+      synagogue.address.toLowerCase().includes(query) ||
+      synagogue.city.toLowerCase().includes(query) ||
+      getNusachHebrewName(synagogue.nusach).toLowerCase().includes(query);
     const matchesNusach =
       !selectedNusach || synagogue.nusach === selectedNusach;
-    return matchesSearch && matchesNusach;
+    const matchesPrayer = !selectedPrayer; // Prayer filter can be extended later
+    return matchesSearch && matchesNusach && matchesPrayer;
   });
+
+  const handleSearchClear = () => {
+    dispatch({ type: "SET_SEARCH_QUERY", payload: "" });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur();
+    }
+  };
 
   const handleSynagogueClick = (synagogueId: string) => {
     router.push(`/synagogue/${synagogueId}`);
@@ -346,10 +395,19 @@ export default function Home() {
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
+                  {searchQuery && (
+                    <button
+                      onClick={handleSearchClear}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
+                      aria-label="נקה חיפוש"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
                   <input
                     type="text"
-                    placeholder="חפש לפי מיקום או שם בית כנסת..."
+                    placeholder="חפש לפי מיקום, שם בית כנסת, עיר או נוסח..."
                     value={searchQuery}
                     onChange={(e) =>
                       dispatch({
@@ -357,14 +415,28 @@ export default function Home() {
                         payload: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-4 pr-12 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg transition-all"
+                    onKeyDown={handleKeyDown}
+                    className={`w-full px-4 py-4 ${searchQuery ? "pr-12 pl-12" : "pr-12"} rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg transition-all`}
                   />
                 </div>
-                <button className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 px-8 py-4 rounded-xl font-bold hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center sm:w-auto w-full">
+                <button
+                  onClick={() => {
+                    const input = document.querySelector(
+                      'input[type="text"][placeholder*="חפש"]'
+                    ) as HTMLInputElement;
+                    input?.focus();
+                  }}
+                  className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 px-8 py-4 rounded-xl font-bold hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center sm:w-auto w-full"
+                >
                   <Search className="w-5 h-5 ms-2" />
                   חיפוש
                 </button>
               </div>
+              {searchQuery && (
+                <div className="mt-4 text-right text-blue-100 text-sm">
+                  נמצאו {filteredSynagogues.length} תוצאות עבור "{searchQuery}"
+                </div>
+              )}
             </div>
           </div>
 
@@ -499,7 +571,28 @@ export default function Home() {
                 </span>
               </h3>
               <div className="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
-                {filteredSynagogues.map((synagogue, index) => (
+                {filteredSynagogues.length === 0 ? (
+                  <div className="text-center py-12 px-4">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <p className="text-gray-600 font-semibold text-lg mb-2">
+                      לא נמצאו תוצאות
+                    </p>
+                    <p className="text-gray-500 text-sm mb-4">
+                      {searchQuery
+                        ? `אין בתי כנסת התואמים לחיפוש "${searchQuery}"`
+                        : "נסה לשנות את המסננים או לבצע חיפוש אחר"}
+                    </p>
+                    {searchQuery && (
+                      <button
+                        onClick={handleSearchClear}
+                        className="text-blue-600 hover:text-blue-700 font-medium text-sm underline"
+                      >
+                        נקה חיפוש
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  filteredSynagogues.map((synagogue, index) => (
                   <div
                     key={synagogue.id}
                     className="group p-4 border-2 border-gray-100 rounded-xl hover:border-blue-300 hover:shadow-lg cursor-pointer transition-all transform hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50"
@@ -564,7 +657,8 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 

@@ -1,122 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// Real Israeli synagogue data
-const mockSynagogues = [
-  {
-    id: "1",
-    name: "בית הכנסת הגדול - תל אביב",
-    address: "רחוב אלנבי 110",
-    city: "תל אביב-יפו",
-    latitude: 32.0643,
-    longitude: 34.7704,
-    nusach: "ASHKENAZ",
-    averageRating: 4.7,
-    totalReviews: 145,
-    wheelchairAccess: true,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "2",
-    name: "בית הכנסת החורבה",
-    address: "הרובע היהודי",
-    city: "ירושלים",
-    latitude: 31.7746,
-    longitude: 35.2298,
-    nusach: "ASHKENAZ",
-    averageRating: 4.9,
-    totalReviews: 289,
-    wheelchairAccess: true,
-    parking: false,
-    airConditioning: true,
-  },
-  {
-    id: "3",
-    name: "בית הכנסת הספרדי - ירושלים",
-    address: "רחוב בן יהדה 45",
-    city: "ירושלים",
-    latitude: 31.7781,
-    longitude: 35.2246,
-    nusach: "SEPHARD",
-    averageRating: 4.6,
-    totalReviews: 178,
-    wheelchairAccess: false,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "4",
-    name: "בית כנסת חב\"ד רמת אביב",
-    address: "רחוב רמת אביב 30",
-    city: "תל אביב-יפו",
-    latitude: 32.1173,
-    longitude: 34.8069,
-    nusach: "CHABAD",
-    averageRating: 4.8,
-    totalReviews: 92,
-    wheelchairAccess: true,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "5",
-    name: "בית הכנסת העתיק בטבריה",
-    address: "הרובע היהודי העתיק",
-    city: "טבריה",
-    latitude: 32.7894,
-    longitude: 35.5426,
-    nusach: "SEPHARD",
-    averageRating: 4.5,
-    totalReviews: 67,
-    wheelchairAccess: false,
-    parking: false,
-    airConditioning: false,
-  },
-  {
-    id: "6",
-    name: "בית הכנסת אוהל משה - חיפה",
-    address: "רחוב הרצל 50",
-    city: "חיפה",
-    latitude: 32.8192,
-    longitude: 34.9992,
-    nusach: "ASHKENAZ",
-    averageRating: 4.4,
-    totalReviews: 134,
-    wheelchairAccess: true,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "7",
-    name: "בית הכנסת עדת ישורון - נתניה",
-    address: "רחוב בן גוריון 15",
-    city: "נתניה",
-    latitude: 32.3298,
-    longitude: 34.8572,
-    nusach: "EDOT_MIZRACH",
-    averageRating: 4.6,
-    totalReviews: 98,
-    wheelchairAccess: true,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "8",
-    name: "בית הכנסת אור החיים - בני ברק",
-    address: "רחוב רבי עקיבא 120",
-    city: "בני ברק",
-    latitude: 32.0918,
-    longitude: 34.8268,
-    nusach: "ASHKENAZ",
-    averageRating: 4.9,
-    totalReviews: 234,
-    wheelchairAccess: true,
-    parking: false,
-    airConditioning: true,
-  },
-];
-
 // GET /api/synagogues - Search synagogues with filters
 export async function GET(request: NextRequest) {
   try {
@@ -124,27 +8,64 @@ export async function GET(request: NextRequest) {
     const nusach = searchParams.get("nusach");
     const search = searchParams.get("search");
 
-    let filteredSynagogues = [...mockSynagogues];
+    // Build Prisma query
+    const where: any = {};
 
     // Filter by nusach
     if (nusach) {
-      filteredSynagogues = filteredSynagogues.filter(
-        (synagogue) => synagogue.nusach === nusach
-      );
+      where.nusach = nusach;
     }
 
-    // Text search
+    // Text search - using case-insensitive search with Prisma
     if (search) {
-      const searchLower = search.toLowerCase();
-      filteredSynagogues = filteredSynagogues.filter(
-        (synagogue) =>
-          synagogue.name.toLowerCase().includes(searchLower) ||
-          synagogue.address.toLowerCase().includes(searchLower) ||
-          synagogue.city.toLowerCase().includes(searchLower)
-      );
+      where.OR = [
+        { name: { contains: search } },
+        { address: { contains: search } },
+        { city: { contains: search } },
+      ];
     }
 
-    return NextResponse.json({ synagogues: filteredSynagogues });
+    // Fetch synagogues from database with reviews aggregation
+    const synagogues = await prisma.synagogue.findMany({
+      where,
+      include: {
+        reviews: {
+          select: {
+            rating: true,
+          },
+        },
+      },
+      orderBy: {
+        averageRating: "desc",
+      },
+    });
+
+    // Calculate averageRating and totalReviews from reviews
+    const synagoguesWithRatings = synagogues.map((synagogue) => {
+      const reviews = synagogue.reviews;
+      const totalReviews = reviews.length;
+      const averageRating =
+        totalReviews > 0
+          ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+          : 0;
+
+      return {
+        id: synagogue.id,
+        name: synagogue.name,
+        address: synagogue.address,
+        city: synagogue.city,
+        latitude: synagogue.latitude,
+        longitude: synagogue.longitude,
+        nusach: synagogue.nusach,
+        averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
+        totalReviews: totalReviews,
+        wheelchairAccess: synagogue.wheelchairAccess,
+        parking: synagogue.parking,
+        airConditioning: synagogue.airConditioning,
+      };
+    });
+
+    return NextResponse.json({ synagogues: synagoguesWithRatings });
   } catch (error) {
     console.error("Error fetching synagogues:", error);
     return NextResponse.json(
@@ -180,35 +101,57 @@ export async function POST(request: NextRequest) {
       mikveh,
     } = body;
 
-    // For now, just return the new synagogue data with a generated ID
-    // In production, you would create in the database here
-    const newId = (mockSynagogues.length + 1).toString();
-    const synagogue = {
-      id: newId,
-      name,
-      address,
-      city,
-      state,
-      country,
-      postalCode,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
-      nusach,
-      rabbi,
-      phone,
-      email,
-      website,
-      description,
-      wheelchairAccess: wheelchairAccess || false,
-      parking: parking || false,
-      airConditioning: airConditioning || false,
-      womensSection: womensSection || false,
-      mikveh: mikveh || false,
-      averageRating: 0,
-      totalReviews: 0,
-    };
+    // Create synagogue in database
+    const synagogue = await prisma.synagogue.create({
+      data: {
+        name,
+        address,
+        city,
+        state: state || null,
+        country: country || "ישראל",
+        postalCode: postalCode || null,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        nusach: nusach || "ASHKENAZ",
+        rabbi: rabbi || null,
+        phone: phone || null,
+        email: email || null,
+        website: website || null,
+        description: description || null,
+        wheelchairAccess: wheelchairAccess || false,
+        parking: parking || false,
+        airConditioning: airConditioning || false,
+        womensSection: womensSection || false,
+        mikveh: mikveh || false,
+      },
+    });
 
-    return NextResponse.json({ synagogue });
+    return NextResponse.json({
+      synagogue: {
+        id: synagogue.id,
+        name: synagogue.name,
+        address: synagogue.address,
+        city: synagogue.city,
+        state: synagogue.state,
+        country: synagogue.country,
+        postalCode: synagogue.postalCode,
+        latitude: synagogue.latitude,
+        longitude: synagogue.longitude,
+        nusach: synagogue.nusach,
+        rabbi: synagogue.rabbi,
+        phone: synagogue.phone,
+        email: synagogue.email,
+        website: synagogue.website,
+        description: synagogue.description,
+        wheelchairAccess: synagogue.wheelchairAccess,
+        parking: synagogue.parking,
+        airConditioning: synagogue.airConditioning,
+        womensSection: synagogue.womensSection,
+        mikveh: synagogue.mikveh,
+        averageRating: 0,
+        totalReviews: 0,
+      },
+    });
   } catch (error) {
     console.error("Error creating synagogue:", error);
     return NextResponse.json(

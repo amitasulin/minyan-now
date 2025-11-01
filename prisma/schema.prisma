@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -115,7 +115,7 @@ model MinyanReport {
   
   // Verification
   isVerified   Boolean     @default(false)
-  verifiedBy   String[]    // Array of user IDs who verified
+  verifiedBy   String?     // User ID who verified (single verification for now)
   
   synagogue    Synagogue   @relation(fields: [synagogueId], references: [id], onDelete: Cascade)
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
