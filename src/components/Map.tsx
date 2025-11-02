@@ -140,9 +140,6 @@ const MapComponent = ({
         onLoad={() => {
           // Map loaded successfully
         }}
-        onError={() => {
-          console.error("Error rendering Google Map");
-        }}
       >
         {synagogues.map((synagogue) => (
           <div key={synagogue.id}>

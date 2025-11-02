@@ -328,6 +328,9 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
                 zoom={15}
                 synagogues={[synagogue]}
                 className="w-full h-64 rounded-lg"
+                onSynagogueClick={() => {
+                  // Already on the synagogue detail page, no action needed
+                }}
               />
             </div>
 

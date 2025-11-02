@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Nusach, PrayerType } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -1030,7 +1030,10 @@ async function main() {
 
   for (const synagogueData of synagogues) {
     const synagogue = await prisma.synagogue.create({
-      data: synagogueData,
+      data: {
+        ...synagogueData,
+        nusach: synagogueData.nusach as Nusach,
+      },
     });
 
     console.log(`✅ Created synagogue: ${synagogue.name}`);
@@ -1038,37 +1041,37 @@ async function main() {
     // Create prayer schedules for each synagogue
     const prayerSchedules = [
       // Sunday
-      { dayOfWeek: 0, prayerType: "SHACHARIT", time: "08:00" },
-      { dayOfWeek: 0, prayerType: "MINCHA", time: "17:30" },
-      { dayOfWeek: 0, prayerType: "MAARIV", time: "19:00" },
+      { dayOfWeek: 0, prayerType: PrayerType.SHACHARIT, time: "08:00" },
+      { dayOfWeek: 0, prayerType: PrayerType.MINCHA, time: "17:30" },
+      { dayOfWeek: 0, prayerType: PrayerType.MAARIV, time: "19:00" },
 
       // Monday-Thursday
-      { dayOfWeek: 1, prayerType: "SHACHARIT", time: "07:30" },
-      { dayOfWeek: 1, prayerType: "MINCHA", time: "17:30" },
-      { dayOfWeek: 1, prayerType: "MAARIV", time: "19:00" },
+      { dayOfWeek: 1, prayerType: PrayerType.SHACHARIT, time: "07:30" },
+      { dayOfWeek: 1, prayerType: PrayerType.MINCHA, time: "17:30" },
+      { dayOfWeek: 1, prayerType: PrayerType.MAARIV, time: "19:00" },
 
-      { dayOfWeek: 2, prayerType: "SHACHARIT", time: "07:30" },
-      { dayOfWeek: 2, prayerType: "MINCHA", time: "17:30" },
-      { dayOfWeek: 2, prayerType: "MAARIV", time: "19:00" },
+      { dayOfWeek: 2, prayerType: PrayerType.SHACHARIT, time: "07:30" },
+      { dayOfWeek: 2, prayerType: PrayerType.MINCHA, time: "17:30" },
+      { dayOfWeek: 2, prayerType: PrayerType.MAARIV, time: "19:00" },
 
-      { dayOfWeek: 3, prayerType: "SHACHARIT", time: "07:30" },
-      { dayOfWeek: 3, prayerType: "MINCHA", time: "17:30" },
-      { dayOfWeek: 3, prayerType: "MAARIV", time: "19:00" },
+      { dayOfWeek: 3, prayerType: PrayerType.SHACHARIT, time: "07:30" },
+      { dayOfWeek: 3, prayerType: PrayerType.MINCHA, time: "17:30" },
+      { dayOfWeek: 3, prayerType: PrayerType.MAARIV, time: "19:00" },
 
-      { dayOfWeek: 4, prayerType: "SHACHARIT", time: "07:30" },
-      { dayOfWeek: 4, prayerType: "MINCHA", time: "17:30" },
-      { dayOfWeek: 4, prayerType: "MAARIV", time: "19:00" },
+      { dayOfWeek: 4, prayerType: PrayerType.SHACHARIT, time: "07:30" },
+      { dayOfWeek: 4, prayerType: PrayerType.MINCHA, time: "17:30" },
+      { dayOfWeek: 4, prayerType: PrayerType.MAARIV, time: "19:00" },
 
       // Friday
-      { dayOfWeek: 5, prayerType: "SHACHARIT", time: "07:30" },
-      { dayOfWeek: 5, prayerType: "MINCHA", time: "17:00" },
-      { dayOfWeek: 5, prayerType: "MAARIV", time: "18:30" },
+      { dayOfWeek: 5, prayerType: PrayerType.SHACHARIT, time: "07:30" },
+      { dayOfWeek: 5, prayerType: PrayerType.MINCHA, time: "17:00" },
+      { dayOfWeek: 5, prayerType: PrayerType.MAARIV, time: "18:30" },
 
       // Saturday
-      { dayOfWeek: 6, prayerType: "SHACHARIT", time: "09:00" },
-      { dayOfWeek: 6, prayerType: "MUSAF", time: "10:30" },
-      { dayOfWeek: 6, prayerType: "MINCHA", time: "17:00" },
-      { dayOfWeek: 6, prayerType: "MAARIV", time: "19:30" },
+      { dayOfWeek: 6, prayerType: PrayerType.SHACHARIT, time: "09:00" },
+      { dayOfWeek: 6, prayerType: PrayerType.MUSAF, time: "10:30" },
+      { dayOfWeek: 6, prayerType: PrayerType.MINCHA, time: "17:00" },
+      { dayOfWeek: 6, prayerType: PrayerType.MAARIV, time: "19:30" },
     ];
 
     for (const scheduleData of prayerSchedules) {
