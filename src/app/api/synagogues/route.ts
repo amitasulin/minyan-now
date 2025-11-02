@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma, Nusach } from "@prisma/client";
 
 // GET /api/synagogues - Search synagogues with filters
 export async function GET(request: NextRequest) {
@@ -9,11 +10,14 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
 
     // Build Prisma query
-    const where: any = {};
+    const where: Prisma.SynagogueWhereInput = {};
 
     // Filter by nusach
     if (nusach) {
-      where.nusach = nusach;
+      // Validate that the nusach value is a valid enum value
+      if (Object.values(Nusach).includes(nusach as Nusach)) {
+        where.nusach = nusach as Nusach;
+      }
     }
 
     // Text search - using case-insensitive search with Prisma

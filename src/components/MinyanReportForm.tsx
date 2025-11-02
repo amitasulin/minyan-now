@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, Users, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { MapPin, CheckCircle, AlertCircle } from "lucide-react";
 
 interface MinyanReportFormProps {
   synagogueId: string;

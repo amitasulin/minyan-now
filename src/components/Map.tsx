@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { GoogleMap, Marker, InfoWindow, LoadScript } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  InfoWindow,
+  LoadScript,
+} from "@react-google-maps/api";
 
 interface MapProps {
   center: { lat: number; lng: number };
@@ -19,7 +24,9 @@ interface MapProps {
   className?: string;
 }
 
-const libraries: ("places" | "geometry" | "drawing" | "visualization")[] = ["places"];
+const libraries: ("places" | "geometry" | "drawing" | "visualization")[] = [
+  "places",
+];
 
 const MapComponent = ({
   center,
@@ -67,12 +74,9 @@ const MapComponent = ({
     };
   }, []);
 
-  const handleMarkerClick = useCallback(
-    (synagogueId: string) => {
-      setSelectedSynagogue(synagogueId);
-    },
-    []
-  );
+  const handleMarkerClick = useCallback((synagogueId: string) => {
+    setSelectedSynagogue(synagogueId);
+  }, []);
 
   const handleInfoWindowClose = useCallback(() => {
     setSelectedSynagogue(null);
@@ -85,18 +89,25 @@ const MapComponent = ({
       <div className="flex items-center justify-center h-full bg-gradient-to-br from-red-50 to-orange-50 rounded-lg border-2 border-red-200">
         <div className="text-center p-6 max-w-md">
           <div className="text-4xl mb-4">🗺️</div>
-          <p className="text-red-600 font-bold text-lg mb-2">מפתח API לא הוגדר</p>
+          <p className="text-red-600 font-bold text-lg mb-2">
+            מפתח API לא הוגדר
+          </p>
           <p className="text-sm text-gray-700 mb-4 leading-relaxed">
             כדי שהמפה תעבוד, יש צורך להגדיר מפתח API של Google Maps.
           </p>
           <div className="bg-white rounded-lg p-4 text-right text-xs text-gray-600 border border-gray-200">
             <p className="font-semibold mb-2">איך להגדיר:</p>
             <ol className="list-decimal list-inside space-y-1 text-right">
-              <li>צור קובץ <code className="bg-gray-100 px-1 rounded">.env.local</code> בתיקיית השורש</li>
-              <li>הוסף את השורה:
+              <li>
+                צור קובץ{" "}
+                <code className="bg-gray-100 px-1 rounded">.env.local</code>{" "}
+                בתיקיית השורש
+              </li>
+              <li>
+                הוסף את השורה:
                 <br />
                 <code className="bg-gray-100 px-2 py-1 rounded block mt-1">
-                  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="המפתח_שלך"
+                  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=&quot;המפתח_שלך&quot;
                 </code>
               </li>
               <li>קבל מפתח מ-Google Cloud Console</li>
@@ -149,59 +160,90 @@ const MapComponent = ({
               onClick={() => handleMarkerClick(synagogue.id)}
               title={synagogue.name}
             />
-              {selectedSynagogue === synagogue.id && (
-                <InfoWindow
-                  position={{ lat: synagogue.latitude, lng: synagogue.longitude }}
-                  onCloseClick={handleInfoWindowClose}
+            {selectedSynagogue === synagogue.id && (
+              <InfoWindow
+                position={{ lat: synagogue.latitude, lng: synagogue.longitude }}
+                onCloseClick={handleInfoWindowClose}
+              >
+                <div
+                  style={{
+                    direction: "rtl",
+                    minWidth: "200px",
+                    padding: "8px",
+                  }}
                 >
-                  <div style={{ direction: "rtl", minWidth: "200px", padding: "8px" }}>
-                    <h3 style={{ fontWeight: "600", marginBottom: "4px", fontSize: "14px", color: "#111827" }}>
-                      {synagogue.name}
-                    </h3>
-                    {synagogue.address && (
-                      <p style={{ fontSize: "12px", color: "#4b5563", marginBottom: "4px" }}>
-                        {synagogue.address}
-                      </p>
-                    )}
-                    {synagogue.city && (
-                      <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "8px" }}>
-                        {synagogue.city}
-                      </p>
-                    )}
-                    {synagogue.averageRating && (
-                      <p style={{ fontSize: "12px", color: "#d97706", marginBottom: "8px" }}>
-                        ⭐ {synagogue.averageRating.toFixed(1)}
-                      </p>
-                    )}
-                    <button
-                      onClick={() => {
-                        onSynagogueClick(synagogue.id);
-                        handleInfoWindowClose();
-                      }}
+                  <h3
+                    style={{
+                      fontWeight: "600",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      color: "#111827",
+                    }}
+                  >
+                    {synagogue.name}
+                  </h3>
+                  {synagogue.address && (
+                    <p
                       style={{
-                        width: "100%",
-                        marginTop: "8px",
-                        backgroundColor: "#2563eb",
-                        color: "white",
                         fontSize: "12px",
-                        padding: "4px 12px",
-                        borderRadius: "6px",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "#1d4ed8";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = "#2563eb";
+                        color: "#4b5563",
+                        marginBottom: "4px",
                       }}
                     >
-                      פרטים נוספים
-                    </button>
-                  </div>
-                </InfoWindow>
-              )}
-            </div>
+                      {synagogue.address}
+                    </p>
+                  )}
+                  {synagogue.city && (
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "#6b7280",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      {synagogue.city}
+                    </p>
+                  )}
+                  {synagogue.averageRating && (
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "#d97706",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      ⭐ {synagogue.averageRating.toFixed(1)}
+                    </p>
+                  )}
+                  <button
+                    onClick={() => {
+                      onSynagogueClick(synagogue.id);
+                      handleInfoWindowClose();
+                    }}
+                    style={{
+                      width: "100%",
+                      marginTop: "8px",
+                      backgroundColor: "#2563eb",
+                      color: "white",
+                      fontSize: "12px",
+                      padding: "4px 12px",
+                      borderRadius: "6px",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#1d4ed8";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "#2563eb";
+                    }}
+                  >
+                    פרטים נוספים
+                  </button>
+                </div>
+              </InfoWindow>
+            )}
+          </div>
         ))}
       </GoogleMap>
     </LoadScript>

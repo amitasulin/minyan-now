@@ -112,7 +112,7 @@ export default function SynagoguesPage() {
                 <option value="SEPHARD">ספרד</option>
                 <option value="EDOT_MIZRACH">עדות המזרח</option>
                 <option value="YEMENITE">תימני</option>
-                <option value="CHABAD">חב"ד</option>
+                <option value="CHABAD">חב&quot;ד</option>
               </select>
             </div>
           </div>

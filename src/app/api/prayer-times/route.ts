@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
           source: "myzmanim",
         };
       }
-    } catch (error) {
+    } catch {
       console.log("MyZmanim API failed, trying Hebcal...");
     }
 
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
             source: "hebcal",
           };
         }
-      } catch (error) {
+      } catch {
         console.log("Hebcal API also failed");
       }
     }

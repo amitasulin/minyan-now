@@ -83,121 +83,6 @@ const reducer: Reducer<State, Action> = (state, action) => {
   }
 };
 
-// Real Israeli synagogue data
-const mockSynagogues: Synagogue[] = [
-  {
-    id: "1",
-    name: "בית הכנסת הגדול - תל אביב",
-    address: "רחוב אלנבי 110",
-    city: "תל אביב-יפו",
-    latitude: 32.0643,
-    longitude: 34.7704,
-    nusach: "ASHKENAZ",
-    averageRating: 4.7,
-    totalReviews: 145,
-    wheelchairAccess: true,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "2",
-    name: "בית הכנסת החורבה",
-    address: "הרובע היהודי",
-    city: "ירושלים",
-    latitude: 31.7746,
-    longitude: 35.2298,
-    nusach: "ASHKENAZ",
-    averageRating: 4.9,
-    totalReviews: 289,
-    wheelchairAccess: true,
-    parking: false,
-    airConditioning: true,
-  },
-  {
-    id: "3",
-    name: "בית הכנסת הספרדי - ירושלים",
-    address: "רחוב בן יהדה 45",
-    city: "ירושלים",
-    latitude: 31.7781,
-    longitude: 35.2246,
-    nusach: "SEPHARD",
-    averageRating: 4.6,
-    totalReviews: 178,
-    wheelchairAccess: false,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "4",
-    name: "בית כנסת חב\"ד רמת אביב",
-    address: "רחוב רמת אביב 30",
-    city: "תל אביב-יפו",
-    latitude: 32.1173,
-    longitude: 34.8069,
-    nusach: "CHABAD",
-    averageRating: 4.8,
-    totalReviews: 92,
-    wheelchairAccess: true,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "5",
-    name: "בית הכנסת העתיק בטבריה",
-    address: "הרובע היהודי העתיק",
-    city: "טבריה",
-    latitude: 32.7894,
-    longitude: 35.5426,
-    nusach: "SEPHARD",
-    averageRating: 4.5,
-    totalReviews: 67,
-    wheelchairAccess: false,
-    parking: false,
-    airConditioning: false,
-  },
-  {
-    id: "6",
-    name: "בית הכנסת אוהל משה - חיפה",
-    address: "רחוב הרצל 50",
-    city: "חיפה",
-    latitude: 32.8192,
-    longitude: 34.9992,
-    nusach: "ASHKENAZ",
-    averageRating: 4.4,
-    totalReviews: 134,
-    wheelchairAccess: true,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "7",
-    name: "בית הכנסת עדת ישורון - נתניה",
-    address: "רחוב בן גוריון 15",
-    city: "נתניה",
-    latitude: 32.3298,
-    longitude: 34.8572,
-    nusach: "EDOT_MIZRACH",
-    averageRating: 4.6,
-    totalReviews: 98,
-    wheelchairAccess: true,
-    parking: true,
-    airConditioning: true,
-  },
-  {
-    id: "8",
-    name: "בית הכנסת אור החיים - בני ברק",
-    address: "רחוב רבי עקיבא 120",
-    city: "בני ברק",
-    latitude: 32.0918,
-    longitude: 34.8268,
-    nusach: "ASHKENAZ",
-    averageRating: 4.9,
-    totalReviews: 234,
-    wheelchairAccess: true,
-    parking: false,
-    airConditioning: true,
-  },
-];
 
 export default function Home() {
   const router = useRouter();
@@ -434,7 +319,7 @@ export default function Home() {
               </div>
               {searchQuery && (
                 <div className="mt-4 text-right text-blue-100 text-sm">
-                  נמצאו {filteredSynagogues.length} תוצאות עבור "{searchQuery}"
+                  נמצאו {filteredSynagogues.length} תוצאות עבור &quot;{searchQuery}&quot;
                 </div>
               )}
             </div>
@@ -492,7 +377,7 @@ export default function Home() {
               <option value="SEPHARD">ספרד</option>
               <option value="EDOT_MIZRACH">עדות המזרח</option>
               <option value="YEMENITE">תימני</option>
-              <option value="CHABAD">חב"ד</option>
+              <option value="CHABAD">חב&quot;ד</option>
             </select>
             <select
               value={selectedPrayer}
