@@ -15,6 +15,31 @@ import Link from "next/link";
 import Map from "@/components/Map";
 import MinyanReportForm from "@/components/MinyanReportForm";
 
+interface GoogleDetails {
+  placeId?: string;
+  rating?: number;
+  userRatingsTotal?: number;
+  openingHours?: {
+    openNow: boolean;
+    weekdayText: string[];
+    periods: any[];
+  };
+  photos?: Array<{
+    url: string;
+    width: number;
+    height: number;
+  }>;
+  reviews?: Array<{
+    author: string;
+    rating: number;
+    text: string;
+    time: number;
+    relativeTime: string;
+  }>;
+  website?: string;
+  phone?: string;
+}
+
 interface SynagogueDetails {
   id: string;
   name: string;
@@ -53,6 +78,12 @@ interface SynagogueDetails {
       trustScore: number;
     };
   }>;
+  photos?: Array<{
+    id: string;
+    url: string;
+    caption?: string;
+    isPrimary: boolean;
+  }>;
 }
 
 interface SynagoguePageProps {
@@ -64,6 +95,8 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
   const [synagogue, setSynagogue] = useState<SynagogueDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [showReportForm, setShowReportForm] = useState(false);
+  const [googleDetails, setGoogleDetails] = useState<GoogleDetails | null>(null);
+  const [loadingGoogleDetails, setLoadingGoogleDetails] = useState(false);
   const [prayerTimes, setPrayerTimes] = useState<{
     shacharit: string;
     mincha: string;
@@ -71,16 +104,50 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
   } | null>(null);
 
   const fetchSynagogueDetails = useCallback(async () => {
+    if (!synagogueId) {
+      console.log("[Page] No synagogue ID, skipping fetch");
+      setLoading(false);
+      return;
+    }
+    console.log(`[Page] Fetching synagogue details for ID: ${synagogueId}`);
     try {
       const response = await fetch(`/api/synagogues/${synagogueId}`);
+      console.log(`[Page] Response status: ${response.status}`);
       if (response.ok) {
         const data = await response.json();
-        setSynagogue(data.synagogue);
+        console.log(`[Page] Received data:`, data);
+        if (data.synagogue) {
+          setSynagogue(data.synagogue);
+          console.log(`[Page] Set synagogue: ${data.synagogue.name}`);
+        } else {
+          console.error("[Page] No synagogue data in response:", data);
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("[Page] Failed to fetch synagogue:", response.status, errorData);
       }
     } catch (error) {
-      console.error("Error fetching synagogue details:", error);
+      console.error("[Page] Error fetching synagogue details:", error);
     } finally {
       setLoading(false);
+    }
+  }, [synagogueId]);
+
+  const fetchGoogleDetails = useCallback(async () => {
+    if (!synagogueId) return;
+    try {
+      setLoadingGoogleDetails(true);
+      const response = await fetch(`/api/synagogues/${synagogueId}/google-details`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.googleDetails) {
+          setGoogleDetails(data.googleDetails);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching Google details:", error);
+    } finally {
+      setLoadingGoogleDetails(false);
     }
   }, [synagogueId]);
 
@@ -116,8 +183,9 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
   useEffect(() => {
     if (synagogue) {
       fetchPrayerTimes();
+      fetchGoogleDetails();
     }
-  }, [synagogue, fetchPrayerTimes]);
+  }, [synagogue, fetchPrayerTimes, fetchGoogleDetails]);
 
   const getDayName = (dayOfWeek: number) => {
     const days = [
@@ -163,7 +231,7 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
     );
   }
 
-  if (!synagogue && !loading) {
+  if (!synagogue && !loading && synagogueId) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -173,6 +241,11 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
           <p className="text-gray-600 mb-4">
             בית הכנסת שחיפשת לא קיים במערכת.
           </p>
+          {process.env.NODE_ENV === "development" && (
+            <p className="text-sm text-gray-500 mb-4">
+              ID: {synagogueId}
+            </p>
+          )}
           <Link href="/" className="text-blue-600 hover:text-blue-800">
             ← חזרה לדף הבית
           </Link>
@@ -248,26 +321,78 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
                 <p className="text-gray-700 mb-4">{synagogue.description}</p>
               )}
 
+              {/* Google Rating (if available) */}
+              {googleDetails?.rating && (
+                <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="flex items-center">
+                    <Star className="w-5 h-5 text-yellow-500 ml-2" />
+                    <div>
+                      <span className="font-semibold text-gray-900">
+                        {googleDetails.rating.toFixed(1)}
+                      </span>
+                      <span className="text-sm text-gray-600 mr-2">
+                        {" "}
+                        ({googleDetails.userRatingsTotal || 0} ביקורות ב-Google)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Photos - from database or Google */}
+              {(synagogue.photos && synagogue.photos.length > 0) ||
+              (googleDetails?.photos && googleDetails.photos.length > 0) ? (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3">תמונות</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {/* Show database photos first */}
+                    {synagogue.photos &&
+                      synagogue.photos.map((photo) => (
+                        <img
+                          key={photo.id}
+                          src={photo.url}
+                          alt={photo.caption || `${synagogue.name} - תמונה`}
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => window.open(photo.url, "_blank")}
+                        />
+                      ))}
+                    {/* Then show Google photos if no database photos */}
+                    {(!synagogue.photos ||
+                      synagogue.photos.length === 0) &&
+                      googleDetails?.photos &&
+                      googleDetails.photos.map((photo, index) => (
+                        <img
+                          key={`google-${index}`}
+                          src={photo.url}
+                          alt={`${synagogue.name} - תמונה ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => window.open(photo.url, "_blank")}
+                        />
+                      ))}
+                  </div>
+                </div>
+              ) : null}
+
               {/* Contact Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {synagogue.rabbi && (
                   <div className="flex items-center">
                     <span className="text-sm font-medium text-gray-500 mr-2">
-                      Rabbi:
+                      רב:
                     </span>
                     <span className="text-sm text-gray-900">
                       {synagogue.rabbi}
                     </span>
                   </div>
                 )}
-                {synagogue.phone && (
+                {(synagogue.phone || googleDetails?.phone) && (
                   <div className="flex items-center">
                     <Phone className="w-4 h-4 text-gray-500 mr-2" />
                     <a
-                      href={`tel:${synagogue.phone}`}
+                      href={`tel:${googleDetails?.phone || synagogue.phone}`}
                       className="text-sm text-blue-600 hover:text-blue-800"
                     >
-                      {synagogue.phone}
+                      {googleDetails?.phone || synagogue.phone}
                     </a>
                   </div>
                 )}
@@ -282,20 +407,53 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
                     </a>
                   </div>
                 )}
-                {synagogue.website && (
+                {(synagogue.website || googleDetails?.website) && (
                   <div className="flex items-center">
                     <Globe className="w-4 h-4 text-gray-500 mr-2" />
                     <a
-                      href={synagogue.website}
+                      href={googleDetails?.website || synagogue.website}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:text-blue-800"
                     >
-                      Website
+                      אתר אינטרנט
                     </a>
                   </div>
                 )}
               </div>
+
+              {/* Opening Hours from Google */}
+              {googleDetails?.openingHours && (
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3">שעות פעילות</h3>
+                  {googleDetails.openingHours.openNow !== undefined && (
+                    <div className="mb-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          googleDetails.openingHours.openNow
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {googleDetails.openingHours.openNow
+                          ? "🟢 פתוח עכשיו"
+                          : "🔴 סגור עכשיו"}
+                      </span>
+                    </div>
+                  )}
+                  {googleDetails.openingHours.weekdayText.length > 0 && (
+                    <div className="space-y-1 text-sm">
+                      {googleDetails.openingHours.weekdayText.map(
+                        (day, index) => (
+                          <div key={index} className="text-gray-700">
+                            {day}
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Accessibility Features */}
               <div className="flex flex-wrap gap-2">
@@ -327,11 +485,59 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
               </div>
             </div>
 
+            {/* Google Reviews */}
+            {googleDetails?.reviews && googleDetails.reviews.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <h3 className="text-lg font-semibold mb-3">
+                  ביקורות מ-Google
+                </h3>
+                <div className="space-y-4">
+                  {googleDetails.reviews.map((review, index) => (
+                    <div
+                      key={index}
+                      className="p-4 bg-gray-50 border border-gray-200 rounded-lg"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center ml-2">
+                            <span className="text-blue-600 font-semibold text-sm">
+                              {review.author.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {review.author}
+                            </div>
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${
+                                    i < review.rating
+                                      ? "text-yellow-400 fill-yellow-400"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
+                              <span className="text-xs text-gray-500 mr-2">
+                                {review.relativeTime}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 mt-2">{review.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Map */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <MapPin className="w-5 h-5 mr-2 text-blue-600" />
-                Location
+                מיקום
               </h3>
               <Map
                 center={{ lat: synagogue.latitude, lng: synagogue.longitude }}
@@ -348,7 +554,7 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <Clock className="w-5 h-5 mr-2 text-blue-600" />
-                Prayer Schedule
+                לוח זמני תפילה
               </h3>
               {prayerTimes && (
                 <div className="mb-4 p-3 bg-blue-50 rounded-lg">

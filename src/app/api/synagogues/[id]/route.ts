@@ -9,7 +9,18 @@ export async function GET(
   try {
     const { id: synagogueId } = await params;
 
+    console.log(`[API] Fetching synagogue with ID: ${synagogueId}`);
+
+    if (!synagogueId) {
+      console.error("[API] No synagogue ID provided");
+      return NextResponse.json(
+        { error: "Synagogue ID is required" },
+        { status: 400 }
+      );
+    }
+
     // Fetch synagogue from database
+    console.log(`[API] Querying database for synagogue: ${synagogueId}`);
     const synagogue = await prisma.synagogue.findUnique({
       where: { id: synagogueId },
       include: {
@@ -38,15 +49,24 @@ export async function GET(
             },
           },
         },
+        photos: {
+          take: 5,
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
       },
     });
 
     if (!synagogue) {
+      console.error(`[API] Synagogue not found in database: ${synagogueId}`);
       return NextResponse.json(
-        { error: "Synagogue not found" },
+        { error: "Synagogue not found", id: synagogueId },
         { status: 404 }
       );
     }
+
+    console.log(`[API] Found synagogue: ${synagogue.name} (${synagogue.id})`);
 
     // Calculate average rating
     const totalReviews = synagogue.reviews.length;
@@ -55,24 +75,39 @@ export async function GET(
         ? synagogue.reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
         : 0;
 
-    // Format recent reports
-    const recentReports = synagogue.minyanReports.map((report) => ({
-      id: report.id,
-      prayerType: report.prayerType,
-      status: report.status,
-      reportTime: report.reportTime.toISOString(),
-      notes: report.notes || undefined,
-      user: {
-        name: report.user?.name || undefined,
-        trustScore: 85, // Default trust score, can be calculated from user data
-      },
-    }));
+    // Format recent reports - handle case where user might not exist
+    const recentReports = synagogue.minyanReports.map((report) => {
+      try {
+        return {
+          id: report.id,
+          prayerType: report.prayerType,
+          status: report.status,
+          reportTime: report.reportTime.toISOString(),
+          notes: report.notes || undefined,
+          user: {
+            name: report.user?.name || "Anonymous",
+            trustScore: 85, // Default trust score, can be calculated from user data
+          },
+        };
+      } catch (err) {
+        console.error(`[API] Error formatting report ${report.id}:`, err);
+        return null;
+      }
+    }).filter((report): report is NonNullable<typeof report> => report !== null);
 
     // Format prayer schedule
     const prayerSchedule = synagogue.prayerSchedule.map((schedule) => ({
       dayOfWeek: schedule.dayOfWeek,
       prayerType: schedule.prayerType,
       time: schedule.time,
+    }));
+
+    // Format photos
+    const photos = synagogue.photos.map((photo) => ({
+      id: photo.id,
+      url: photo.url,
+      caption: photo.caption || undefined,
+      isPrimary: photo.isPrimary,
     }));
 
     // Return formatted synagogue data
@@ -106,12 +141,15 @@ export async function GET(
           { dayOfWeek: 0, prayerType: "MAARIV", time: "19:30" },
         ],
         recentReports: recentReports,
+        photos: photos,
       },
     });
   } catch (error) {
-    console.error("Error fetching synagogue details:", error);
+    console.error("[API] Error fetching synagogue details:", error);
+    console.error("[API] Error details:", error instanceof Error ? error.message : String(error));
+    console.error("[API] Error stack:", error instanceof Error ? error.stack : "No stack trace");
     return NextResponse.json(
-      { error: "Failed to fetch synagogue details" },
+      { error: "Failed to fetch synagogue details", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

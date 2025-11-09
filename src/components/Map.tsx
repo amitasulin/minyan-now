@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { GoogleMap, InfoWindow, LoadScript } from "@react-google-maps/api";
+import { GoogleMap, InfoWindow, useLoadScript } from "@react-google-maps/api";
 
 interface MapProps {
   center: { lat: number; lng: number };
@@ -38,6 +38,14 @@ const MapComponent = ({
     null
   );
   const [map, setMap] = useState<google.maps.Map | null>(null);
+
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+
+  // Use useLoadScript hook instead of LoadScript component to prevent double loading
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: apiKey,
+    libraries: libraries,
+  });
 
   const mapContainerStyle = {
     width: "100%",
@@ -91,8 +99,6 @@ const MapComponent = ({
     setSelectedSynagogue(null);
   }, []);
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
-
   if (!apiKey) {
     return (
       <div className="flex items-center justify-center h-full bg-gradient-to-br from-red-50 to-orange-50 rounded-lg border-2 border-red-200">
@@ -136,22 +142,30 @@ const MapComponent = ({
     );
   }
 
-  return (
-    <LoadScript
-      googleMapsApiKey={apiKey}
-      libraries={libraries}
-      loadingElement={
-        <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">טוען מפה...</p>
-          </div>
+  if (loadError) {
+    return (
+      <div className="flex items-center justify-center h-full bg-red-50 rounded-lg border-2 border-red-200">
+        <div className="text-center p-6">
+          <p className="text-red-600 font-bold">שגיאה בטעינת Google Maps</p>
+          <p className="text-sm text-gray-700 mt-2">{loadError.message}</p>
         </div>
-      }
-      onError={(error) => {
-        console.error("Error loading Google Maps:", error);
-      }}
-    >
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">טוען מפה...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={center}
@@ -255,7 +269,7 @@ const MapComponent = ({
         onMarkerClick={handleMarkerClick}
         createMarkerContent={createMarkerContent}
       />
-    </LoadScript>
+    </>
   );
 };
 
