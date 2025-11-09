@@ -85,9 +85,10 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
   }, [synagogueId]);
 
   const fetchPrayerTimes = useCallback(async () => {
+    if (!synagogue) return;
     try {
       const response = await fetch(
-        `/api/prayer-times?lat=40.6782&lng=-73.9442`
+        `/api/prayer-times?lat=${synagogue.latitude}&lng=${synagogue.longitude}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -96,7 +97,7 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
     } catch (error) {
       console.error("Error fetching prayer times:", error);
     }
-  }, []);
+  }, [synagogue]);
 
   useEffect(() => {
     const getParams = async () => {
@@ -109,30 +110,35 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
   useEffect(() => {
     if (synagogueId) {
       fetchSynagogueDetails();
+    }
+  }, [synagogueId, fetchSynagogueDetails]);
+
+  useEffect(() => {
+    if (synagogue) {
       fetchPrayerTimes();
     }
-  }, [synagogueId, fetchSynagogueDetails, fetchPrayerTimes]);
+  }, [synagogue, fetchPrayerTimes]);
 
   const getDayName = (dayOfWeek: number) => {
     const days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+      "ראשון",
+      "שני",
+      "שלישי",
+      "רביעי",
+      "חמישי",
+      "שישי",
+      "שבת",
     ];
     return days[dayOfWeek];
   };
 
   const getPrayerTypeName = (prayerType: string) => {
     const types: { [key: string]: string } = {
-      SHACHARIT: "Shacharit",
-      MINCHA: "Mincha",
-      MAARIV: "Maariv",
-      MUSAF: "Musaf",
-      NEILAH: "Neilah",
+      SHACHARIT: "שחרית",
+      MINCHA: "מנחה",
+      MAARIV: "ערבית",
+      MUSAF: "מוסף",
+      NEILAH: "נעילה",
     };
     return types[prayerType] || prayerType;
   };
@@ -157,18 +163,18 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
     );
   }
 
-  if (!synagogue) {
+  if (!synagogue && !loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Synagogue Not Found
+            בית כנסת לא נמצא
           </h1>
           <p className="text-gray-600 mb-4">
-            The synagogue you&apos;re looking for doesn&apos;t exist.
+            בית הכנסת שחיפשת לא קיים במערכת.
           </p>
           <Link href="/" className="text-blue-600 hover:text-blue-800">
-            ← Back to Home
+            ← חזרה לדף הבית
           </Link>
         </div>
       </div>
@@ -221,7 +227,11 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
                     </span>
                     <span className="mx-2">•</span>
                     <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                      {synagogue.nusach}
+                      {synagogue.nusach === "ASHKENAZ" ? "אשכנז" :
+                       synagogue.nusach === "SEPHARD" ? "ספרד" :
+                       synagogue.nusach === "EDOT_MIZRACH" ? "עדות המזרח" :
+                       synagogue.nusach === "YEMENITE" ? "תימן" :
+                       synagogue.nusach === "CHABAD" ? "חב\"ד" : synagogue.nusach}
                     </span>
                   </div>
                 </div>
