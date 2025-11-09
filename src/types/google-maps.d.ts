@@ -13,6 +13,23 @@ declare namespace google {
       addListener(eventName: string, handler: () => void): void;
     }
 
+    namespace marker {
+      class AdvancedMarkerElement {
+        constructor(opts?: AdvancedMarkerElementOptions);
+        map: Map | null;
+        position?: LatLng | LatLngLiteral;
+        content?: HTMLElement | null;
+        title?: string;
+      }
+
+      interface AdvancedMarkerElementOptions {
+        map?: Map | null;
+        position?: LatLng | LatLngLiteral;
+        content?: HTMLElement | null;
+        title?: string;
+      }
+    }
+
     class LatLngBounds {
       extend(point: LatLng | LatLngLiteral): void;
     }
@@ -35,6 +52,7 @@ declare namespace google {
       mapTypeControl?: boolean;
       streetViewControl?: boolean;
       fullscreenControl?: boolean;
+      mapId?: string;
       styles?: MapTypeStyle[];
     }
 

@@ -76,6 +76,19 @@ A web platform for finding active minyanim and nearby synagogues in real-time. B
    5. Copy the API key to your `.env.local` file
    6. (Recommended) Restrict the API key to only your domains for security
 
+   **How to get Google Maps Map ID (for Advanced Markers):**
+   
+   1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+   2. Navigate to **Maps** → **Map Styles** (or go to [Map Styles page](https://console.cloud.google.com/google/maps-apis/studio/maps))
+   3. Click **"Create Map Style"** or use an existing style
+   4. After creating a style, you'll get a **Map ID** (looks like: `1234567890abcdef`)
+   5. Alternatively, you can use the default Map ID by going to **Maps** → **Map Management** → **Map IDs**
+   6. Copy the Map ID and add it to your `.env.local` file:
+      ```
+      NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID="your-map-id-here"
+      ```
+   7. If you don't have a Map ID, the app will use `DEMO_MAP_ID` for testing (limited functionality)
+
 4. **Set up the database**
 
    ```bash

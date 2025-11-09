@@ -1,12 +1,7 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
-import {
-  GoogleMap,
-  Marker,
-  InfoWindow,
-  LoadScript,
-} from "@react-google-maps/api";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { GoogleMap, InfoWindow, LoadScript } from "@react-google-maps/api";
 
 interface MapProps {
   center: { lat: number; lng: number };
@@ -24,9 +19,13 @@ interface MapProps {
   className?: string;
 }
 
-const libraries: ("places" | "geometry" | "drawing" | "visualization")[] = [
-  "places",
-];
+const libraries: (
+  | "places"
+  | "geometry"
+  | "drawing"
+  | "visualization"
+  | "marker"
+)[] = ["places", "marker"];
 
 const MapComponent = ({
   center,
@@ -38,11 +37,16 @@ const MapComponent = ({
   const [selectedSynagogue, setSelectedSynagogue] = useState<string | null>(
     null
   );
+  const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const mapContainerStyle = {
     width: "100%",
     height: className.includes("h-") ? "100%" : "384px",
   };
+
+  // Get map ID from environment or use demo
+  const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID";
+  const isDemoMapId = mapId === "DEMO_MAP_ID";
 
   const mapOptions = {
     disableDefaultUI: false,
@@ -50,28 +54,33 @@ const MapComponent = ({
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: true,
-    styles: [
-      {
-        featureType: "poi",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }],
-      },
-    ],
+    mapId: mapId, // Required for AdvancedMarkerElement
+    // Only use styles if using DEMO_MAP_ID (no custom map style)
+    // If using a real Map ID, the styles are defined in the Map Style, so don't override them
+    ...(isDemoMapId && {
+      styles: [
+        {
+          featureType: "poi",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }],
+        },
+      ],
+    }),
   };
 
-  // Custom synagogue icon - create inside LoadScript callback
-  const synagogueIcon = useMemo(() => {
-    const svgString = `
+  // Custom synagogue icon element
+  const createMarkerContent = useCallback(() => {
+    const div = document.createElement("div");
+    div.innerHTML = `
       <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <path fill="#1e40af" d="M16 2L2 10v4h2v10c0 2.2 1.8 4 4 4h6v6h8v-6h6c2.2 0 4-1.8 4-4V14h2v-4L16 2z"/>
         <circle cx="16" cy="18" r="3" fill="#fbbf24"/>
       </svg>
     `;
-    return {
-      url: "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString),
-      scaledSize: { width: 32, height: 32 },
-      anchor: { x: 16, y: 32 },
-    };
+    div.style.width = "32px";
+    div.style.height = "32px";
+    div.style.cursor = "pointer";
+    return div;
   }, []);
 
   const handleMarkerClick = useCallback((synagogueId: string) => {
@@ -148,18 +157,12 @@ const MapComponent = ({
         center={center}
         zoom={zoom}
         options={mapOptions}
-        onLoad={() => {
-          // Map loaded successfully
+        onLoad={(mapInstance) => {
+          setMap(mapInstance);
         }}
       >
         {synagogues.map((synagogue) => (
           <div key={synagogue.id}>
-            <Marker
-              position={{ lat: synagogue.latitude, lng: synagogue.longitude }}
-              icon={synagogueIcon}
-              onClick={() => handleMarkerClick(synagogue.id)}
-              title={synagogue.name}
-            />
             {selectedSynagogue === synagogue.id && (
               <InfoWindow
                 position={{ lat: synagogue.latitude, lng: synagogue.longitude }}
@@ -246,8 +249,88 @@ const MapComponent = ({
           </div>
         ))}
       </GoogleMap>
+      <AdvancedMarkers
+        map={map}
+        synagogues={synagogues}
+        onMarkerClick={handleMarkerClick}
+        createMarkerContent={createMarkerContent}
+      />
     </LoadScript>
   );
+};
+
+// Component to handle AdvancedMarkerElement creation
+const AdvancedMarkers = ({
+  map,
+  synagogues,
+  onMarkerClick,
+  createMarkerContent,
+}: {
+  map: google.maps.Map | null;
+  synagogues: Array<{
+    id: string;
+    name: string;
+    latitude: number;
+    longitude: number;
+  }>;
+  onMarkerClick: (synagogueId: string) => void;
+  createMarkerContent: () => HTMLElement;
+}) => {
+  const markersRef = useRef<
+    Map<string, google.maps.marker.AdvancedMarkerElement>
+  >(new Map());
+
+  useEffect(() => {
+    if (!map || !window.google?.maps) return;
+
+    // Load marker library if not already loaded
+    const loadMarkers = async () => {
+      try {
+        // Check if marker library is already loaded
+        if (!window.google.maps.marker) {
+          await window.google.maps.importLibrary("marker");
+        }
+
+        // Clean up old markers
+        markersRef.current.forEach((marker) => {
+          marker.map = null;
+        });
+        markersRef.current.clear();
+
+        // Create new markers
+        synagogues.forEach((synagogue) => {
+          const markerElement = createMarkerContent();
+
+          const marker = new window.google.maps.marker.AdvancedMarkerElement({
+            map,
+            position: { lat: synagogue.latitude, lng: synagogue.longitude },
+            content: markerElement,
+            title: synagogue.name,
+          });
+
+          markerElement.addEventListener("click", () => {
+            onMarkerClick(synagogue.id);
+          });
+
+          markersRef.current.set(synagogue.id, marker);
+        });
+      } catch (error) {
+        console.error("Error loading markers:", error);
+      }
+    };
+
+    loadMarkers();
+
+    // Cleanup function
+    return () => {
+      markersRef.current.forEach((marker) => {
+        marker.map = null;
+      });
+      markersRef.current.clear();
+    };
+  }, [map, synagogues, onMarkerClick, createMarkerContent]);
+
+  return null;
 };
 
 export default MapComponent;

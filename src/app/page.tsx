@@ -126,9 +126,17 @@ export default function Home() {
     }
 
     // Fetch synagogues from API
-    const fetchSynagogues = async () => {
+    const fetchSynagogues = async (location?: { lat: number; lng: number }) => {
       try {
-        const response = await fetch("/api/synagogues");
+        const params = new URLSearchParams();
+        // Use large radius to show all synagogues initially
+        if (location) {
+          params.append("lat", location.lat.toString());
+          params.append("lng", location.lng.toString());
+          params.append("radius", "200"); // 200km to cover all of Israel
+        }
+
+        const response = await fetch(`/api/synagogues?${params.toString()}`);
         if (response.ok) {
           const data = await response.json();
           dispatch({
@@ -153,8 +161,72 @@ export default function Home() {
       }
     };
 
-    fetchSynagogues();
+    // Fetch synagogues when location is available
+    if (userLocation) {
+      fetchSynagogues(userLocation);
+    } else {
+      fetchSynagogues();
+    }
   }, []);
+
+  // Refetch synagogues when search query or filters change
+  useEffect(() => {
+    const fetchSynagogues = async (location?: { lat: number; lng: number }) => {
+      try {
+        const params = new URLSearchParams();
+        
+        // Only use geographic filter if there's NO search query (search should work across all of Israel)
+        // If there's a search query, don't limit by location - search everywhere
+        if (location && !searchQuery) {
+          if (selectedNusach) {
+            // If filtering by nusach only, use moderate radius
+            params.append("lat", location.lat.toString());
+            params.append("lng", location.lng.toString());
+            params.append("radius", "50"); // 50km radius when filtering by nusach
+          } else {
+            // If no filters at all, use a very large radius to show all synagogues
+            params.append("lat", location.lat.toString());
+            params.append("lng", location.lng.toString());
+            params.append("radius", "200"); // 200km to cover all of Israel
+          }
+        }
+        // If there's a search query, don't add geographic filter - search everywhere
+        
+        if (selectedNusach) {
+          params.append("nusach", selectedNusach);
+        }
+        if (searchQuery) {
+          params.append("search", searchQuery);
+        }
+
+        const response = await fetch(`/api/synagogues?${params.toString()}`);
+        if (response.ok) {
+          const data = await response.json();
+          dispatch({
+            type: "SET_SYNAGOGUES_AND_FINISH_LOADING",
+            payload: data.synagogues || [],
+          });
+        } else {
+          console.error("Failed to fetch synagogues:", response.status);
+          // Don't clear synagogues on error, keep existing ones
+        }
+      } catch (error) {
+        console.error("Error fetching synagogues:", error);
+        // Don't clear synagogues on error, keep existing ones
+      }
+    };
+
+    // Debounce search query
+    const timeoutId = setTimeout(() => {
+      if (userLocation) {
+        fetchSynagogues(userLocation);
+      } else {
+        fetchSynagogues();
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, selectedNusach, userLocation]);
 
   // Helper function to get Hebrew nusach name
   const getNusachHebrewName = (nusach: string): string => {
@@ -168,19 +240,9 @@ export default function Home() {
     return nusachMap[nusach] || nusach;
   };
 
-  const filteredSynagogues = synagogues.filter((synagogue) => {
-    const query = searchQuery.toLowerCase().trim();
-    const matchesSearch =
-      !query ||
-      synagogue.name.toLowerCase().includes(query) ||
-      synagogue.address.toLowerCase().includes(query) ||
-      synagogue.city.toLowerCase().includes(query) ||
-      getNusachHebrewName(synagogue.nusach).toLowerCase().includes(query);
-    const matchesNusach =
-      !selectedNusach || synagogue.nusach === selectedNusach;
-    const matchesPrayer = !selectedPrayer; // Prayer filter can be extended later
-    return matchesSearch && matchesNusach && matchesPrayer;
-  });
+  // The synagogues are already filtered by the API, so we just use them directly
+  // Only apply client-side filtering if needed for additional features
+  const filteredSynagogues = synagogues;
 
   const handleSearchClear = () => {
     dispatch({ type: "SET_SEARCH_QUERY", payload: "" });
@@ -292,6 +354,8 @@ export default function Home() {
                   )}
                   <input
                     type="text"
+                    id="search-input"
+                    name="search"
                     placeholder="חפש לפי מיקום, שם בית כנסת, עיר או נוסח..."
                     value={searchQuery}
                     onChange={(e) =>
@@ -362,6 +426,8 @@ export default function Home() {
               <span className="text-sm font-semibold text-gray-800">סינון:</span>
             </div>
             <select
+              id="nusach-filter"
+              name="nusach"
               value={selectedNusach}
               onChange={(e) =>
                 dispatch({
@@ -380,6 +446,8 @@ export default function Home() {
               <option value="CHABAD">חב&quot;ד</option>
             </select>
             <select
+              id="prayer-filter"
+              name="prayer"
               value={selectedPrayer}
               onChange={(e) =>
                 dispatch({
