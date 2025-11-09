@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import {
   MapPin,
   Users,
-  Clock,
   AlertCircle,
   CheckCircle,
   Search,
   Star,
-  MessageSquare,
   Navigation,
   Menu,
 } from "lucide-react";

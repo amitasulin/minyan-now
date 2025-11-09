@@ -230,17 +230,6 @@ export default function Home() {
     return () => clearTimeout(timeoutId);
   }, [searchQuery, selectedNusach, userLocation]);
 
-  // Helper function to get Hebrew nusach name
-  const getNusachHebrewName = (nusach: string): string => {
-    const nusachMap: { [key: string]: string } = {
-      ASHKENAZ: "אשכנז",
-      SEPHARD: "ספרד",
-      EDOT_MIZRACH: "עדות המזרח",
-      YEMENITE: "תימני",
-      CHABAD: "חב\"ד",
-    };
-    return nusachMap[nusach] || nusach;
-  };
 
   // The synagogues are already filtered by the API, so we just use them directly
   // Only apply client-side filtering if needed for additional features

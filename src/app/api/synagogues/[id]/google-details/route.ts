@@ -59,8 +59,22 @@ export async function GET(
           const result = detailsData.result;
 
           // Format photos URLs
+          interface GooglePhoto {
+            photo_reference: string;
+            width: number;
+            height: number;
+          }
+          
+          interface GoogleReview {
+            author_name: string;
+            rating: number;
+            text: string;
+            time: number;
+            relative_time_description: string;
+          }
+          
           const photos = result.photos
-            ? result.photos.slice(0, 5).map((photo: any) => ({
+            ? result.photos.slice(0, 5).map((photo: GooglePhoto) => ({
                 url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photo.photo_reference}&key=${apiKey}`,
                 width: photo.width,
                 height: photo.height,
@@ -69,7 +83,7 @@ export async function GET(
 
           // Format reviews
           const reviews = result.reviews
-            ? result.reviews.slice(0, 5).map((review: any) => ({
+            ? result.reviews.slice(0, 5).map((review: GoogleReview) => ({
                 author: review.author_name,
                 rating: review.rating,
                 text: review.text,

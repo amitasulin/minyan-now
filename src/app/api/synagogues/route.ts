@@ -49,8 +49,9 @@ export async function GET(request: NextRequest) {
         const latDelta = radiusKm / 111;
         const lngDelta = radiusKm / 96;
 
+        const existingAnd = Array.isArray(where.AND) ? where.AND : (where.AND ? [where.AND] : []);
         where.AND = [
-          ...(where.AND || []),
+          ...existingAnd,
           {
             latitude: {
               gte: latitude - latDelta,

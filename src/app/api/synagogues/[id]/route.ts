@@ -164,20 +164,23 @@ export async function PUT(
     const { id: synagogueId } = await params;
     const body = await request.json();
 
-    // For now, just return the updated mock data
-    // In production, you would update the database here
-    const synagogue =
-      mockSynagogues[synagogueId as keyof typeof mockSynagogues];
+    // Check if synagogue exists
+    const existingSynagogue = await prisma.synagogue.findUnique({
+      where: { id: synagogueId },
+    });
 
-    if (!synagogue) {
+    if (!existingSynagogue) {
       return NextResponse.json(
         { error: "Synagogue not found" },
         { status: 404 }
       );
     }
 
-    // Simulate update by returning the existing data with any changes
-    const updatedSynagogue = { ...synagogue, ...body };
+    // Update synagogue in database
+    const updatedSynagogue = await prisma.synagogue.update({
+      where: { id: synagogueId },
+      data: body,
+    });
 
     return NextResponse.json({ synagogue: updatedSynagogue });
   } catch (error) {
@@ -197,17 +200,22 @@ export async function DELETE(
   try {
     const { id: synagogueId } = await params;
 
-    // For now, just check if the synagogue exists in mock data
-    // In production, you would delete from the database here
-    const synagogue =
-      mockSynagogues[synagogueId as keyof typeof mockSynagogues];
+    // Check if synagogue exists
+    const existingSynagogue = await prisma.synagogue.findUnique({
+      where: { id: synagogueId },
+    });
 
-    if (!synagogue) {
+    if (!existingSynagogue) {
       return NextResponse.json(
         { error: "Synagogue not found" },
         { status: 404 }
       );
     }
+
+    // Delete synagogue from database
+    await prisma.synagogue.delete({
+      where: { id: synagogueId },
+    });
 
     return NextResponse.json({ message: "Synagogue deleted successfully" });
   } catch (error) {

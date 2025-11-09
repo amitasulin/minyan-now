@@ -22,7 +22,10 @@ interface GoogleDetails {
   openingHours?: {
     openNow: boolean;
     weekdayText: string[];
-    periods: any[];
+    periods: Array<{
+      open: { day: number; time: string };
+      close?: { day: number; time: string };
+    }>;
   };
   photos?: Array<{
     url: string;
@@ -252,6 +255,10 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
         </div>
       </div>
     );
+  }
+
+  if (!synagogue) {
+    return null;
   }
 
   return (
