@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useReducer, useEffect, Reducer } from "react";
+import { useReducer, useEffect, useState, Reducer } from "react";
 import {
   MapPin,
   Clock,
@@ -15,6 +15,7 @@ import {
   Navigation,
   Sparkles,
   X,
+  Menu,
 } from "lucide-react";
 
 const Map = dynamic(() => import("@/components/Map"), {
@@ -86,6 +87,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
 export default function Home() {
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const {
     userLocation,
@@ -268,7 +270,7 @@ export default function Home() {
               <div className="text-3xl transform hover:scale-110 transition-transform">
                 🕍
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 מניין עכשיו
               </h1>
             </div>
@@ -302,10 +304,60 @@ export default function Home() {
                 <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </Link>
             </nav>
-            <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 font-semibold">
+            
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              aria-label="תפריט"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            
+            {/* Desktop Login Button */}
+            <button className="hidden md:block bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 font-semibold">
               התחבר
             </button>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-gray-200 py-4 animate-in slide-in-from-top duration-200">
+              <nav className="flex flex-col space-y-2">
+                <Link
+                  href="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors text-right"
+                >
+                  מצא מניין
+                </Link>
+                <Link
+                  href="/synagogues"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors text-right"
+                >
+                  בתי כנסת
+                </Link>
+                <Link
+                  href="/report"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors text-right"
+                >
+                  דווח
+                </Link>
+                <Link
+                  href="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors text-right"
+                >
+                  אודות
+                </Link>
+                <button className="mt-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg transition-all font-semibold text-right">
+                  התחבר
+                </button>
+              </nav>
+            </div>
+          )}
         </div>
       </header>
 
