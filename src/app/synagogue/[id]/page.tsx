@@ -12,6 +12,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import Map from "@/components/Map";
 import MinyanReportForm from "@/components/MinyanReportForm";
 
@@ -99,7 +100,6 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
   const [loading, setLoading] = useState(true);
   const [showReportForm, setShowReportForm] = useState(false);
   const [googleDetails, setGoogleDetails] = useState<GoogleDetails | null>(null);
-  const [loadingGoogleDetails, setLoadingGoogleDetails] = useState(false);
   const [prayerTimes, setPrayerTimes] = useState<{
     shacharit: string;
     mincha: string;
@@ -139,7 +139,6 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
   const fetchGoogleDetails = useCallback(async () => {
     if (!synagogueId) return;
     try {
-      setLoadingGoogleDetails(true);
       const response = await fetch(`/api/synagogues/${synagogueId}/google-details`);
       if (response.ok) {
         const data = await response.json();
@@ -149,8 +148,6 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
       }
     } catch (error) {
       console.error("Error fetching Google details:", error);
-    } finally {
-      setLoadingGoogleDetails(false);
     }
   }, [synagogueId]);
 
@@ -355,12 +352,15 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
                     {/* Show database photos first */}
                     {synagogue.photos &&
                       synagogue.photos.map((photo) => (
-                        <img
+                        <Image
                           key={photo.id}
                           src={photo.url}
                           alt={photo.caption || `${synagogue.name} - תמונה`}
+                          width={200}
+                          height={128}
                           className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                           onClick={() => window.open(photo.url, "_blank")}
+                          unoptimized
                         />
                       ))}
                     {/* Then show Google photos if no database photos */}
@@ -368,12 +368,15 @@ export default function SynagoguePage({ params }: SynagoguePageProps) {
                       synagogue.photos.length === 0) &&
                       googleDetails?.photos &&
                       googleDetails.photos.map((photo, index) => (
-                        <img
+                        <Image
                           key={`google-${index}`}
                           src={photo.url}
                           alt={`${synagogue.name} - תמונה ${index + 1}`}
+                          width={200}
+                          height={128}
                           className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                           onClick={() => window.open(photo.url, "_blank")}
+                          unoptimized
                         />
                       ))}
                   </div>

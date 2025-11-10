@@ -12,7 +12,7 @@ let databaseUrl = process.env.DATABASE_URL || "file:./prisma/dev.db";
 // Always convert to absolute path for better reliability
 if (databaseUrl.startsWith("file:")) {
   let dbPath: string;
-  
+
   if (databaseUrl.startsWith("file:./") || databaseUrl.startsWith("file:../")) {
     // Relative path - resolve it
     const relativePath = databaseUrl.replace(/^file:\.?\//, "");
@@ -21,18 +21,27 @@ if (databaseUrl.startsWith("file:")) {
     // Absolute path - extract it
     dbPath = databaseUrl.replace(/^file:/, "");
   }
-  
-  // Check if file exists
-  if (!fs.existsSync(dbPath)) {
-    console.error(`❌ Database file not found at: ${dbPath}`);
-    console.error(`Current working directory: ${process.cwd()}`);
-    throw new Error(`Database file not found at: ${dbPath}`);
+
+  const dbDir = path.dirname(dbPath);
+
+  // Ensure the directory exists before accessing the file
+  if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
   }
-  
+
+  // Create an empty SQLite file if it does not yet exist
+  if (!fs.existsSync(dbPath)) {
+    fs.closeSync(fs.openSync(dbPath, "a"));
+  }
+
   // Convert Windows path separators to forward slashes for SQLite
-  // SQLite on Windows needs forward slashes, and spaces need to be handled
-  databaseUrl = `file:${dbPath.replace(/\\/g, "/")}`;
-  
+  const normalizedPath = dbPath.replace(/\\/g, "/");
+
+  // Encode spaces and other special characters so SQLite can open the file
+  const encodedPath = encodeURI(normalizedPath);
+
+  databaseUrl = `file:${encodedPath}`;
+
   // Log for debugging
   if (process.env.NODE_ENV !== "production") {
     console.log(`✅ Database URL resolved: ${databaseUrl}`);

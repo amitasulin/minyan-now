@@ -297,6 +297,9 @@ const AdvancedMarkers = ({
   useEffect(() => {
     if (!map || !window.google?.maps) return;
 
+    // Store current markers ref value at the start of the effect for cleanup
+    const markersAtStart = markersRef.current;
+
     // Load marker library if not already loaded
     const loadMarkers = async () => {
       try {
@@ -306,10 +309,10 @@ const AdvancedMarkers = ({
         }
 
         // Clean up old markers
-        markersRef.current.forEach((marker) => {
+        markersAtStart.forEach((marker) => {
           marker.map = null;
         });
-        markersRef.current.clear();
+        markersAtStart.clear();
 
         // Create new markers
         synagogues.forEach((synagogue) => {
@@ -335,12 +338,13 @@ const AdvancedMarkers = ({
 
     loadMarkers();
 
-    // Cleanup function
+    // Cleanup function - use the markers ref value captured at effect start
     return () => {
-      markersRef.current.forEach((marker) => {
+      // Use the ref value that was captured at the start of the effect
+      markersAtStart.forEach((marker) => {
         marker.map = null;
       });
-      markersRef.current.clear();
+      markersAtStart.clear();
     };
   }, [map, synagogues, onMarkerClick, createMarkerContent]);
 

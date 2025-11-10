@@ -169,6 +169,7 @@ export default function Home() {
     } else {
       fetchSynagogues();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Refetch synagogues when search query or filters change

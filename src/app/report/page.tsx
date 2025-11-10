@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   MapPin,
@@ -57,11 +57,7 @@ export default function ReportPage() {
     contactEmail: "",
   });
 
-  useEffect(() => {
-    fetchSynagogues();
-  }, []);
-
-  const fetchSynagogues = async () => {
+  const fetchSynagogues = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -78,7 +74,11 @@ export default function ReportPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    fetchSynagogues();
+  }, [fetchSynagogues]);
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
