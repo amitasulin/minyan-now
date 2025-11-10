@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "postbuild": "prisma migrate deploy || true",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
