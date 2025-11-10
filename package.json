@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "postbuild": "prisma migrate deploy || true",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
@@ -13,9 +14,6 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "fetch-synagogues": "tsx scripts/fetch-synagogues-from-places.ts"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",

@@ -2,6 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npx prisma generate && npm run build",
   "installCommand": "npm ci && npm install --no-save --platform=linuxmusl --arch=x64 lightningcss @tailwindcss/oxide",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "env": {
+    "PRISMA_MIGRATE_SKIP_GENERATE": "1"
+  }
 }
 
