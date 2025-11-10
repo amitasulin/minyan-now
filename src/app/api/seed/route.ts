@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, Nusach, PrayerType } from "@prisma/client";
+import { PrismaClient, Nusach } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -198,8 +198,8 @@ export async function POST(request: NextRequest) {
           data: synagogueData,
         });
         created++;
-      } catch (error: any) {
-        if (error?.code === "P2002") {
+      } catch (error: unknown) {
+        if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
           skipped++;
         } else {
           console.error(`Error creating ${synagogueData.name}:`, error);
