@@ -7,53 +7,21 @@
 import { PrismaClient, Nusach } from "@prisma/client";
 import { config } from "dotenv";
 import { resolve } from "path";
-import path from "path";
-import fs from "fs";
 
-// Load environment variables from .env.local (with override to ensure .env.local takes precedence)
-// Load .env.local first, then explicitly override DATABASE_URL
-const envLocal = config({ path: resolve(process.cwd(), ".env.local") });
-const env = config({ path: resolve(process.cwd(), ".env") });
+// Load environment variables from .env.local
+config({ path: resolve(process.cwd(), ".env.local") });
+config({ path: resolve(process.cwd(), ".env") });
 
-// Use DATABASE_URL from .env.local if it exists, otherwise from .env, otherwise default
-let databaseUrl = envLocal.parsed?.DATABASE_URL || 
-                  process.env.DATABASE_URL || 
-                  "file:./prisma/dev.db";
+// Use DATABASE_URL from environment
+const databaseUrl = process.env.DATABASE_URL;
 
-// Remove quotes from DATABASE_URL if present
-if (databaseUrl.startsWith('"') && databaseUrl.endsWith('"')) {
-  databaseUrl = databaseUrl.slice(1, -1);
-}
-if (databaseUrl.startsWith("'") && databaseUrl.endsWith("'")) {
-  databaseUrl = databaseUrl.slice(1, -1);
+if (!databaseUrl) {
+  console.error("❌ DATABASE_URL environment variable is not set");
+  console.error("Please set DATABASE_URL in your .env.local file");
+  throw new Error("DATABASE_URL is required");
 }
 
-if (databaseUrl.startsWith("file:")) {
-  let dbPath: string;
-  
-  if (databaseUrl.startsWith("file:./") || databaseUrl.startsWith("file:../")) {
-    const relativePath = databaseUrl.replace(/^file:\.?\//, "");
-    dbPath = path.resolve(process.cwd(), relativePath);
-  } else {
-    dbPath = databaseUrl.replace(/^file:/, "");
-  }
-  
-  // Remove quotes if still present
-  dbPath = dbPath.replace(/^["']|["']$/g, "");
-  
-  if (!fs.existsSync(dbPath)) {
-    console.error(`❌ Database file not found at: ${dbPath}`);
-    console.error(`Current working directory: ${process.cwd()}`);
-    throw new Error(`Database file not found at: ${dbPath}`);
-  }
-  
-  // Convert to absolute path and use forward slashes
-  const absolutePath = path.resolve(dbPath);
-  databaseUrl = `file:${absolutePath.replace(/\\/g, "/")}`;
-  console.log(`✅ Database URL: ${databaseUrl}`);
-  console.log(`✅ Database file exists: ${fs.existsSync(absolutePath)}`);
-}
-
+// PostgreSQL connection - no file path handling needed
 const prisma = new PrismaClient({
   datasources: {
     db: {
