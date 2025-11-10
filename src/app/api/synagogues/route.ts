@@ -1,6 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { Prisma, Nusach } from "@prisma/client";
+import fs from "fs";
+import path from "path";
+import type { Synagogue } from "@/types/synagogue";
+
+// Load synagogues from JSON file
+function loadSynagogues(): Synagogue[] {
+  const filePath = path.join(process.cwd(), "data", "synagogues.json");
+  const fileContents = fs.readFileSync(filePath, "utf8");
+  return JSON.parse(fileContents) as Synagogue[];
+}
+
+// Calculate distance between two coordinates (Haversine formula)
+function calculateDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371; // Earth's radius in km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 // GET /api/synagogues - Search synagogues with filters
 export async function GET(request: NextRequest) {
@@ -8,117 +36,72 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const nusach = searchParams.get("nusach");
     const search = searchParams.get("search");
-
-    // Build Prisma query (without search - we'll filter search in memory for better Hebrew support)
-    const where: Prisma.SynagogueWhereInput = {};
-
-    // Filter by nusach
-    if (nusach) {
-      // Validate that the nusach value is a valid enum value
-      if (Object.values(Nusach).includes(nusach as Nusach)) {
-        where.nusach = nusach as Nusach;
-      }
-    }
-
-    // Text search - SQLite doesn't support case-insensitive mode well, so we filter in application layer
-    // We'll fetch all synagogues (or filtered by other criteria) and then filter by search term in memory
-    let searchTerm: string | null = null;
-    if (search) {
-      searchTerm = search.trim();
-      // Don't add search to where clause - we'll filter in memory for better Hebrew support
-      // This allows us to do case-insensitive search which SQLite doesn't support well
-    }
-
-    // Geographic search (if lat/lng provided)
-    // Don't apply geographic filter if there's a search term - search should work across all of Israel
     const lat = searchParams.get("lat");
     const lng = searchParams.get("lng");
     const radius = searchParams.get("radius") || "10"; // Default 10km radius
 
+    // Load all synagogues from JSON
+    let synagogues = loadSynagogues();
+
+    // Filter by nusach
+    if (nusach) {
+      synagogues = synagogues.filter((s) => s.nusach === nusach);
+    }
+
+    // Text search - filter in memory for better Hebrew support
+    let searchTerm: string | null = null;
+    if (search) {
+      searchTerm = search.trim();
+      const searchLower = searchTerm.toLowerCase();
+      synagogues = synagogues.filter((s) => {
+        return (
+          s.name.toLowerCase().includes(searchLower) ||
+          s.address.toLowerCase().includes(searchLower) ||
+          s.city.toLowerCase().includes(searchLower)
+        );
+      });
+    }
+
+    // Geographic search (if lat/lng provided and no search term)
+    // Don't apply geographic filter if there's a search term - search should work across all of Israel
     if (lat && lng && !searchTerm) {
-      // Only apply geographic filter if there's NO search term
       const latitude = parseFloat(lat);
       const longitude = parseFloat(lng);
       const radiusKm = parseFloat(radius);
-      
-      // Only apply geographic filter if radius is reasonable (< 500km)
-      // This prevents filtering out all results when radius is very large
-      if (radiusKm < 500) {
-        // Approximate: 1 degree latitude ≈ 111 km
-        // For longitude, it varies by latitude, but for Israel (~31-33°N) it's ~96 km
-        const latDelta = radiusKm / 111;
-        const lngDelta = radiusKm / 96;
 
-        const existingAnd = Array.isArray(where.AND) ? where.AND : (where.AND ? [where.AND] : []);
-        where.AND = [
-          ...existingAnd,
-          {
-            latitude: {
-              gte: latitude - latDelta,
-              lte: latitude + latDelta,
-            },
-            longitude: {
-              gte: longitude - lngDelta,
-              lte: longitude + lngDelta,
-            },
-          },
-        ];
+      // Only apply geographic filter if radius is reasonable (< 500km)
+      if (radiusKm < 500) {
+        synagogues = synagogues.filter((s) => {
+          const distance = calculateDistance(
+            latitude,
+            longitude,
+            s.latitude,
+            s.longitude
+          );
+          return distance <= radiusKm;
+        });
       }
       // If radius >= 500km, don't apply geographic filter (show all synagogues)
     }
 
-    // Fetch synagogues from database with reviews aggregation
-    const synagogues = await prisma.synagogue.findMany({
-      where,
-      include: {
-        reviews: {
-          select: {
-            rating: true,
-          },
-        },
-      },
-      orderBy: {
-        averageRating: "desc",
-      },
-    });
+    // Format response - use averageRating and totalReviews from JSON
+    const synagoguesWithRatings = synagogues.map((synagogue) => ({
+      id: synagogue.id,
+      name: synagogue.name,
+      address: synagogue.address,
+      city: synagogue.city,
+      latitude: synagogue.latitude,
+      longitude: synagogue.longitude,
+      nusach: synagogue.nusach,
+      averageRating: synagogue.averageRating || 0,
+      totalReviews: synagogue.totalReviews || 0,
+      wheelchairAccess: synagogue.wheelchairAccess,
+      parking: synagogue.parking,
+      airConditioning: synagogue.airConditioning,
+    }));
 
-    // Calculate averageRating and totalReviews from reviews
-    let synagoguesWithRatings = synagogues.map((synagogue) => {
-      const reviews = synagogue.reviews;
-      const totalReviews = reviews.length;
-      const averageRating =
-        totalReviews > 0
-          ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
-          : 0;
-
-      return {
-        id: synagogue.id,
-        name: synagogue.name,
-        address: synagogue.address,
-        city: synagogue.city,
-        latitude: synagogue.latitude,
-        longitude: synagogue.longitude,
-        nusach: synagogue.nusach,
-        averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
-        totalReviews: totalReviews,
-        wheelchairAccess: synagogue.wheelchairAccess,
-        parking: synagogue.parking,
-        airConditioning: synagogue.airConditioning,
-      };
-    });
-
-    // Additional client-side filtering for better Hebrew search support
-    // SQLite's contains is case-sensitive and doesn't work well with Hebrew
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      synagoguesWithRatings = synagoguesWithRatings.filter((synagogue) => {
-        return (
-          synagogue.name.toLowerCase().includes(searchLower) ||
-          synagogue.address.toLowerCase().includes(searchLower) ||
-          synagogue.city.toLowerCase().includes(searchLower)
-        );
-      });
-    }
+    // Sort by average rating (descending)
+    synagoguesWithRatings.sort((a, b) => b.averageRating - a.averageRating);
 
     return NextResponse.json({ synagogues: synagoguesWithRatings });
   } catch (error) {
@@ -130,7 +113,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/synagogues - Create new synagogue
+// POST /api/synagogues - Create new synagogue (mock - returns success but doesn't save)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -156,9 +139,13 @@ export async function POST(request: NextRequest) {
       mikveh,
     } = body;
 
-    // Create synagogue in database
-    const synagogue = await prisma.synagogue.create({
-      data: {
+    // Generate a mock ID
+    const mockId = `syn_${Date.now()}`;
+
+    // Return mock response (in real app, this would save to database)
+    return NextResponse.json({
+      synagogue: {
+        id: mockId,
         name,
         address,
         city,
@@ -178,31 +165,6 @@ export async function POST(request: NextRequest) {
         airConditioning: airConditioning || false,
         womensSection: womensSection || false,
         mikveh: mikveh || false,
-      },
-    });
-
-    return NextResponse.json({
-      synagogue: {
-        id: synagogue.id,
-        name: synagogue.name,
-        address: synagogue.address,
-        city: synagogue.city,
-        state: synagogue.state,
-        country: synagogue.country,
-        postalCode: synagogue.postalCode,
-        latitude: synagogue.latitude,
-        longitude: synagogue.longitude,
-        nusach: synagogue.nusach,
-        rabbi: synagogue.rabbi,
-        phone: synagogue.phone,
-        email: synagogue.email,
-        website: synagogue.website,
-        description: synagogue.description,
-        wheelchairAccess: synagogue.wheelchairAccess,
-        parking: synagogue.parking,
-        airConditioning: synagogue.airConditioning,
-        womensSection: synagogue.womensSection,
-        mikveh: synagogue.mikveh,
         averageRating: 0,
         totalReviews: 0,
       },

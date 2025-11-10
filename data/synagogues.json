@@ -1,0 +1,1190 @@
+[
+  {
+    "id": "syn_001",
+    "name": "בית הכנסת אור החיים",
+    "address": "רחוב יפו 45",
+    "city": "ירושלים",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "91000",
+    "latitude": 31.7683,
+    "longitude": 35.2137,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב דוד כהן",
+    "phone": "02-1234567",
+    "email": "info@or-haim.co.il",
+    "website": null,
+    "description": "בית כנסת מרכזי בקרבת השוק, פעיל כל השבוע עם מניינים רבים.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.5,
+    "totalReviews": 23,
+    "photos": [
+      {
+        "id": "photo_001_1",
+        "url": "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת אור החיים - חזית",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:30" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:15" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [
+      {
+        "id": "rev_001",
+        "userId": "user_001",
+        "rating": 5,
+        "comment": "בית כנסת נפלא עם קהילה חמה",
+        "createdAt": "2024-01-15T10:00:00Z"
+      }
+    ],
+    "minyanReports": [
+      {
+        "id": "report_001",
+        "userId": "user_002",
+        "prayerType": "SHACHARIT",
+        "status": "ACTIVE_NOW",
+        "reportTime": "2024-11-10T07:30:00Z",
+        "notes": "מניין פעיל עם 15 אנשים"
+      }
+    ]
+  },
+  {
+    "id": "syn_002",
+    "name": "בית הכנסת שער השמים",
+    "address": "רחוב המלך ג'ורג' 12",
+    "city": "ירושלים",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "91001",
+    "latitude": 31.7768,
+    "longitude": 35.2184,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב משה לוי",
+    "phone": "02-2345678",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי מסורתי עם ארכיטקטורה מרשימה.",
+    "wheelchairAccess": false,
+    "parking": false,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": true,
+    "averageRating": 4.8,
+    "totalReviews": 18,
+    "photos": [
+      {
+        "id": "photo_002_1",
+        "url": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת שער השמים",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:00" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:45" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_003",
+    "name": "בית הכנסת בית יעקב",
+    "address": "רחוב בן יהודה 78",
+    "city": "ירושלים",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "91002",
+    "latitude": 31.7820,
+    "longitude": 35.2170,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב אברהם שטרן",
+    "phone": "02-3456789",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת אשכנזי עם קהילה פעילה וחמה.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.3,
+    "totalReviews": 31,
+    "photos": [
+      {
+        "id": "photo_003_1",
+        "url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת בית יעקב",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "8:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:30" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:15" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_004",
+    "name": "בית הכנסת אוהל משה",
+    "address": "רחוב אגרון 25",
+    "city": "ירושלים",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "91003",
+    "latitude": 31.7700,
+    "longitude": 35.2200,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב יצחק מזרחי",
+    "phone": "02-4567890",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי עם מסורת ארוכת שנים.",
+    "wheelchairAccess": false,
+    "parking": false,
+    "airConditioning": false,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.0,
+    "totalReviews": 12,
+    "photos": [
+      {
+        "id": "photo_004_1",
+        "url": "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת אוהל משה",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:15" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:20" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_005",
+    "name": "בית הכנסת חב\"ד - הרובע היהודי",
+    "address": "רחוב היהודים 15",
+    "city": "ירושלים",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "91004",
+    "latitude": 31.7746,
+    "longitude": 35.2298,
+    "nusach": "CHABAD",
+    "rabbi": "הרב מנחם מנדל",
+    "phone": "02-5678901",
+    "email": "chabad@jerusalem.co.il",
+    "website": null,
+    "description": "בית כנסת חב\"ד פעיל עם מניינים רבים במהלך היום.",
+    "wheelchairAccess": true,
+    "parking": false,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.7,
+    "totalReviews": 45,
+    "photos": [
+      {
+        "id": "photo_005_1",
+        "url": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת חב\"ד",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:45" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:45" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_006",
+    "name": "בית הכנסת תורת חיים",
+    "address": "רחוב שטראוס 30",
+    "city": "ירושלים",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "91005",
+    "latitude": 31.7800,
+    "longitude": 35.2150,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב יעקב רוזן",
+    "phone": "02-6789012",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת עם לימוד תורה יומיומי.",
+    "wheelchairAccess": false,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.2,
+    "totalReviews": 19,
+    "photos": [
+      {
+        "id": "photo_006_1",
+        "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת תורת חיים",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "8:15" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:45" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:20" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_007",
+    "name": "בית הכנסת הגדול - תל אביב",
+    "address": "רחוב אלנבי 110",
+    "city": "תל אביב-יפו",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "65111",
+    "latitude": 32.0640,
+    "longitude": 34.7700,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב ישראל מאיר לאו",
+    "phone": "03-1234567",
+    "email": "info@great-synagogue.co.il",
+    "website": null,
+    "description": "בית הכנסת הגדול של תל אביב, אחד הגדולים בישראל.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.6,
+    "totalReviews": 67,
+    "photos": [
+      {
+        "id": "photo_007_1",
+        "url": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת הגדול - תל אביב",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:00" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_008",
+    "name": "בית הכנסת אוהל מועד",
+    "address": "רחוב רוטשילד 45",
+    "city": "תל אביב-יפו",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "65201",
+    "latitude": 32.0660,
+    "longitude": 34.7720,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב משה עזרא",
+    "phone": "03-2345678",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי במרכז תל אביב עם קהילה פעילה.",
+    "wheelchairAccess": true,
+    "parking": false,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.4,
+    "totalReviews": 28,
+    "photos": [
+      {
+        "id": "photo_008_1",
+        "url": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת אוהל מועד",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:30" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:15" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_009",
+    "name": "בית הכנסת חב\"ד - תל אביב",
+    "address": "רחוב דיזנגוף 90",
+    "city": "תל אביב-יפו",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "64332",
+    "latitude": 32.0800,
+    "longitude": 34.7750,
+    "nusach": "CHABAD",
+    "rabbi": "הרב יוסף יצחק",
+    "phone": "03-3456789",
+    "email": "chabad@telaviv.co.il",
+    "website": null,
+    "description": "בית כנסת חב\"ד פעיל עם מניינים רבים.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.5,
+    "totalReviews": 34,
+    "photos": [
+      {
+        "id": "photo_009_1",
+        "url": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת חב\"ד - תל אביב",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:45" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:30" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:15" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_010",
+    "name": "בית הכנסת בית יעקב - תל אביב",
+    "address": "רחוב בן יהודה 120",
+    "city": "תל אביב-יפו",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "63401",
+    "latitude": 32.0700,
+    "longitude": 34.7800,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב דוד כהן",
+    "phone": "03-4567890",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת אשכנזי עם קהילה חמה ופעילה.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.3,
+    "totalReviews": 22,
+    "photos": [
+      {
+        "id": "photo_010_1",
+        "url": "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת בית יעקב - תל אביב",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "8:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:30" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_011",
+    "name": "בית הכנסת עדות המזרח - תל אביב",
+    "address": "רחוב הרצל 35",
+    "city": "תל אביב-יפו",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "65201",
+    "latitude": 32.0650,
+    "longitude": 34.7680,
+    "nusach": "EDOT_MIZRACH",
+    "rabbi": "הרב אברהם מזרחי",
+    "phone": "03-5678901",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת עדות המזרח עם מסורת עשירה.",
+    "wheelchairAccess": true,
+    "parking": false,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": true,
+    "averageRating": 4.7,
+    "totalReviews": 41,
+    "photos": [
+      {
+        "id": "photo_011_1",
+        "url": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת עדות המזרח - תל אביב",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:15" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:20" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:45" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_012",
+    "name": "בית הכנסת הגדול - חיפה",
+    "address": "רחוב הרצל 55",
+    "city": "חיפה",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "31001",
+    "latitude": 32.8150,
+    "longitude": 34.9890,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב דוד כהן",
+    "phone": "04-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית הכנסת הגדול של חיפה, אחד הגדולים בצפון.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.4,
+    "totalReviews": 29,
+    "photos": [
+      {
+        "id": "photo_012_1",
+        "url": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת הגדול - חיפה",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:30" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:15" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_013",
+    "name": "בית הכנסת אוהל משה - חיפה",
+    "address": "רחוב הרצל 80",
+    "city": "חיפה",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "31002",
+    "latitude": 32.8200,
+    "longitude": 34.9900,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב משה עזרא",
+    "phone": "04-2345678",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי עם קהילה פעילה וחמה.",
+    "wheelchairAccess": true,
+    "parking": false,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.2,
+    "totalReviews": 17,
+    "photos": [
+      {
+        "id": "photo_013_1",
+        "url": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת אוהל משה - חיפה",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:45" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:30" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:15" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_014",
+    "name": "בית הכנסת חב\"ד - חיפה",
+    "address": "רחוב הרצל 100",
+    "city": "חיפה",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "31003",
+    "latitude": 32.8250,
+    "longitude": 34.9920,
+    "nusach": "CHABAD",
+    "rabbi": "הרב מנחם מנדל",
+    "phone": "04-3456789",
+    "email": "chabad@haifa.co.il",
+    "website": null,
+    "description": "בית כנסת חב\"ד פעיל עם מניינים רבים.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.6,
+    "totalReviews": 38,
+    "photos": [
+      {
+        "id": "photo_014_1",
+        "url": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת חב\"ד - חיפה",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "8:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:45" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_015",
+    "name": "בית הכנסת הגדול - באר שבע",
+    "address": "רחוב הרצל 60",
+    "city": "באר שבע",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "84100",
+    "latitude": 31.2430,
+    "longitude": 34.7910,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב משה לוי",
+    "phone": "08-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית הכנסת הגדול של באר שבע, אחד הגדולים בדרום.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.3,
+    "totalReviews": 25,
+    "photos": [
+      {
+        "id": "photo_015_1",
+        "url": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת הגדול - באר שבע",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:00" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_016",
+    "name": "בית הכנסת אוהל מועד - באר שבע",
+    "address": "רחוב הרצל 80",
+    "city": "באר שבע",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "84101",
+    "latitude": 31.2450,
+    "longitude": 34.7930,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב יצחק מזרחי",
+    "phone": "08-2345678",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי עם קהילה פעילה וחמה.",
+    "wheelchairAccess": true,
+    "parking": false,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.1,
+    "totalReviews": 14,
+    "photos": [
+      {
+        "id": "photo_016_1",
+        "url": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת אוהל מועד - באר שבע",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:30" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:15" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_017",
+    "name": "בית הכנסת הגדול - נתניה",
+    "address": "רחוב הרצל 25",
+    "city": "נתניה",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "42201",
+    "latitude": 32.3330,
+    "longitude": 34.8570,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב יעקב רוזן",
+    "phone": "09-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית הכנסת הגדול של נתניה.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.5,
+    "totalReviews": 27,
+    "photos": [
+      {
+        "id": "photo_017_1",
+        "url": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת הגדול - נתניה",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:15" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:20" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:45" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_018",
+    "name": "בית הכנסת אוהל מועד - אשדוד",
+    "address": "רחוב הרצל 40",
+    "city": "אשדוד",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "77401",
+    "latitude": 31.8044,
+    "longitude": 34.6553,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב משה עזרא",
+    "phone": "08-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי עם קהילה פעילה.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.4,
+    "totalReviews": 21,
+    "photos": [
+      {
+        "id": "photo_018_1",
+        "url": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת אוהל מועד - אשדוד",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:00" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_019",
+    "name": "בית הכנסת חב\"ד - רמת גן",
+    "address": "רחוב ביאליק 15",
+    "city": "רמת גן",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "52201",
+    "latitude": 32.0820,
+    "longitude": 34.8100,
+    "nusach": "CHABAD",
+    "rabbi": "הרב מנחם מנדל",
+    "phone": "03-1234567",
+    "email": "chabad@ramatgan.co.il",
+    "website": null,
+    "description": "בית כנסת חב\"ד פעיל.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.6,
+    "totalReviews": 33,
+    "photos": [
+      {
+        "id": "photo_019_1",
+        "url": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת חב\"ד - רמת גן",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:45" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:30" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:15" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_020",
+    "name": "בית הכנסת בית יעקב - בני ברק",
+    "address": "רחוב רבי עקיבא 50",
+    "city": "בני ברק",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "51201",
+    "latitude": 32.0900,
+    "longitude": 34.8300,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב אברהם שטרן",
+    "phone": "03-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת אשכנזי עם קהילה חמה.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": true,
+    "averageRating": 4.8,
+    "totalReviews": 52,
+    "photos": [
+      {
+        "id": "photo_020_1",
+        "url": "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת בית יעקב - בני ברק",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:00" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_021",
+    "name": "בית הכנסת עדות המזרח - פתח תקווה",
+    "address": "רחוב רוטשילד 30",
+    "city": "פתח תקווה",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "49001",
+    "latitude": 32.0880,
+    "longitude": 34.8860,
+    "nusach": "EDOT_MIZRACH",
+    "rabbi": "הרב שלמה עמר",
+    "phone": "03-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת עדות המזרח עם מסורת עשירה.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": true,
+    "averageRating": 4.5,
+    "totalReviews": 26,
+    "photos": [
+      {
+        "id": "photo_021_1",
+        "url": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת עדות המזרח - פתח תקווה",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:30" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:15" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_022",
+    "name": "בית הכנסת תורת חיים - ראשון לציון",
+    "address": "רחוב הרצל 20",
+    "city": "ראשון לציון",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "75101",
+    "latitude": 31.9600,
+    "longitude": 34.8040,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב יעקב רוזן",
+    "phone": "03-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת עם לימוד תורה יומיומי.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.3,
+    "totalReviews": 20,
+    "photos": [
+      {
+        "id": "photo_022_1",
+        "url": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת תורת חיים - ראשון לציון",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "8:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:30" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_023",
+    "name": "בית הכנסת שער השמים - רחובות",
+    "address": "רחוב הרצל 15",
+    "city": "רחובות",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "76100",
+    "latitude": 31.8930,
+    "longitude": 34.8080,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב משה לוי",
+    "phone": "08-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי מסורתי.",
+    "wheelchairAccess": true,
+    "parking": false,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.2,
+    "totalReviews": 16,
+    "photos": [
+      {
+        "id": "photo_023_1",
+        "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת שער השמים - רחובות",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:15" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:20" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:45" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_024",
+    "name": "בית הכנסת בית אל - אשקלון",
+    "address": "רחוב הרצל 10",
+    "city": "אשקלון",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "78201",
+    "latitude": 31.6680,
+    "longitude": 34.5740,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב יוסף גולדברג",
+    "phone": "08-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת מרכזי עם מניינים רבים.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.1,
+    "totalReviews": 13,
+    "photos": [
+      {
+        "id": "photo_024_1",
+        "url": "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת בית אל - אשקלון",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:30" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:15" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_025",
+    "name": "בית הכנסת תימני - טבריה",
+    "address": "רחוב הרצל 5",
+    "city": "טבריה",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "14100",
+    "latitude": 32.7950,
+    "longitude": 35.5300,
+    "nusach": "YEMENITE",
+    "rabbi": "הרב שלום תימני",
+    "phone": "04-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת תימני עם מסורת ייחודית.",
+    "wheelchairAccess": false,
+    "parking": false,
+    "airConditioning": false,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.6,
+    "totalReviews": 19,
+    "photos": [
+      {
+        "id": "photo_025_1",
+        "url": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת תימני - טבריה",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:00" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_026",
+    "name": "בית הכנסת אור החיים - צפת",
+    "address": "רחוב יפו 8",
+    "city": "צפת",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "13100",
+    "latitude": 32.9690,
+    "longitude": 35.4980,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב דוד כהן",
+    "phone": "04-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת מרכזי בקרבת השוק.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.4,
+    "totalReviews": 24,
+    "photos": [
+      {
+        "id": "photo_026_1",
+        "url": "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת אור החיים - צפת",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:45" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:30" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:15" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_027",
+    "name": "בית הכנסת שער ציון - אילת",
+    "address": "רחוב הרצל 12",
+    "city": "אילת",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "88000",
+    "latitude": 29.5570,
+    "longitude": 34.9510,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב דוד בן שימול",
+    "phone": "08-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי עם קהילה גדולה.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.3,
+    "totalReviews": 18,
+    "photos": [
+      {
+        "id": "photo_027_1",
+        "url": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת שער ציון - אילת",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:00" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_028",
+    "name": "בית הכנסת בית יעקב - מודיעין",
+    "address": "רחוב הרצל 18",
+    "city": "מודיעין-מכבים-רעות",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "71700",
+    "latitude": 31.8980,
+    "longitude": 35.0080,
+    "nusach": "ASHKENAZ",
+    "rabbi": "הרב אברהם שטרן",
+    "phone": "08-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת אשכנזי עם קהילה חמה.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.5,
+    "totalReviews": 22,
+    "photos": [
+      {
+        "id": "photo_028_1",
+        "url": "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת בית יעקב - מודיעין",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:30" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:15" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:00" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_029",
+    "name": "בית הכנסת אוהל מועד - נהריה",
+    "address": "רחוב הרצל 22",
+    "city": "נהריה",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "22300",
+    "latitude": 33.0080,
+    "longitude": 35.0980,
+    "nusach": "SEPHARD",
+    "rabbi": "הרב משה עזרא",
+    "phone": "04-1234567",
+    "email": null,
+    "website": null,
+    "description": "בית כנסת ספרדי עם קהילה פעילה.",
+    "wheelchairAccess": true,
+    "parking": false,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.2,
+    "totalReviews": 15,
+    "photos": [
+      {
+        "id": "photo_029_1",
+        "url": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת אוהל מועד - נהריה",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "7:15" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:20" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "18:45" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  },
+  {
+    "id": "syn_030",
+    "name": "בית הכנסת חב\"ד - קריית אתא",
+    "address": "רחוב הרצל 30",
+    "city": "קריית אתא",
+    "state": null,
+    "country": "ישראל",
+    "postalCode": "28000",
+    "latitude": 32.8060,
+    "longitude": 35.1060,
+    "nusach": "CHABAD",
+    "rabbi": "הרב יוסף יצחק",
+    "phone": "04-1234567",
+    "email": "chabad@kiryat-ata.co.il",
+    "website": null,
+    "description": "בית כנסת חב\"ד פעיל.",
+    "wheelchairAccess": true,
+    "parking": true,
+    "airConditioning": true,
+    "womensSection": true,
+    "mikveh": false,
+    "averageRating": 4.6,
+    "totalReviews": 30,
+    "photos": [
+      {
+        "id": "photo_030_1",
+        "url": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=600&fit=crop",
+        "caption": "בית הכנסת חב\"ד - קריית אתא",
+        "isPrimary": true
+      }
+    ],
+    "prayerSchedule": [
+      { "dayOfWeek": 0, "prayerType": "SHACHARIT", "time": "8:00" },
+      { "dayOfWeek": 0, "prayerType": "MINCHA", "time": "13:45" },
+      { "dayOfWeek": 0, "prayerType": "MAARIV", "time": "19:30" }
+    ],
+    "reviews": [],
+    "minyanReports": []
+  }
+]
+

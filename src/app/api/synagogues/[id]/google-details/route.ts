@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import fs from "fs";
+import path from "path";
+import type { Synagogue } from "@/types/synagogue";
+
+// Load synagogues from JSON file
+function loadSynagogues(): Synagogue[] {
+  const filePath = path.join(process.cwd(), "data", "synagogues.json");
+  const fileContents = fs.readFileSync(filePath, "utf8");
+  return JSON.parse(fileContents) as Synagogue[];
+}
 
 // GET /api/synagogues/[id]/google-details - Get additional details from Google Places API
 export async function GET(
@@ -17,15 +26,9 @@ export async function GET(
       );
     }
 
-    // Get synagogue from database
-    const synagogue = await prisma.synagogue.findUnique({
-      where: { id: synagogueId },
-      select: {
-        name: true,
-        latitude: true,
-        longitude: true,
-      },
-    });
+    // Get synagogue from JSON
+    const synagogues = loadSynagogues();
+    const synagogue = synagogues.find((s) => s.id === synagogueId);
 
     if (!synagogue) {
       return NextResponse.json(
